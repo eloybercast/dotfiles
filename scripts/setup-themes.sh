@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# Use Adwaita-dark for best compatibility
 DARK_THEME="Adwaita-dark"
 DARK_ICON="Papirus-Dark"
 CURSOR="Bibata-Modern-Ice"
