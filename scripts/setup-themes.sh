@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# Utilities
 source ~/.config/scripts/utils.sh 2>/dev/null || true
 
 print_warning "🎨 Installing themes, icons, cursors, and fonts..."
 
-# === Install lxappearance for easy GTK theming ===
 print_info "📥 Installing lxappearance..."
 if ! command -v lxappearance >/dev/null 2>&1; then
     sudo pacman -S --noconfirm lxappearance
@@ -13,10 +11,8 @@ else
     print_info "lxappearance already installed, skipping."
 fi
 
-# === Setup directories ===
 mkdir -p ~/.themes ~/.icons ~/.local/share/fonts
 
-# === Install Sweet GTK Theme ===
 print_info "📦 Installing Sweet GTK theme..."
 if [ ! -d "$HOME/.themes/Sweet-Dark" ]; then
     git clone https://github.com/EliverLara/Sweet.git /tmp/Sweet
@@ -26,7 +22,6 @@ else
     print_info "Sweet GTK theme already installed, skipping."
 fi
 
-# === Install Candy Icons ===
 print_info "📦 Installing Candy icons..."
 if [ ! -d "$HOME/.icons/Candy" ]; then
     git clone https://github.com/EliverLara/candy-icons.git ~/.icons/Candy
@@ -34,7 +29,6 @@ else
     print_info "Candy icons already installed, skipping."
 fi
 
-# === Install Sweet Cursors ===
 print_info "🖱️ Installing Sweet cursors..."
 if [ ! -d "$HOME/.icons/Sweet-cursors" ]; then
     git clone https://github.com/EliverLara/Sweet.git /tmp/SweetCursor
@@ -44,10 +38,8 @@ else
     print_info "Sweet cursors already installed, skipping."
 fi
 
-# === Install Fonts (Noto, JetBrains Mono Nerd, Fira Code/Sans) ===
 print_info "🔤 Installing recommended fonts..."
 
-# Helper function to check if font is installed by fc-list
 font_installed() {
     fc-list | grep -i "$1" >/dev/null 2>&1
 }
@@ -73,7 +65,6 @@ else
     print_info "Fira fonts already installed."
 fi
 
-# === Apply dark theme defaults (GTK 3/4 and cursor) ===
 print_info "🌓 Applying Dark theme defaults for GTK 3/4 and cursor..."
 mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
 
@@ -98,7 +89,6 @@ EOF
 
 print_success "✅ Themes, icons, cursors, and fonts installed and dark mode applied."
 
-# === Create toggle script for dark/light themes ===
 mkdir -p ~/.config/scripts
 cat << 'EOF' > ~/.config/scripts/toggle-theme.sh
 #!/bin/bash
