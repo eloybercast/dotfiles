@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# Dark theme variables
-DARK_THEME="Sweet-Dark"
+# Use Adwaita-dark for best compatibility
+DARK_THEME="Adwaita-dark"
 DARK_ICON="Papirus-Dark"
 CURSOR="Bibata-Modern-Ice"
 FONT="JetBrainsMono Nerd Font 10"
