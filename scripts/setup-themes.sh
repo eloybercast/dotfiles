@@ -3,14 +3,18 @@
 # Utilities
 source ~/.config/scripts/utils.sh 2>/dev/null || true
 
-print_warning "🎨 Installing themes (GTK, icons, cursor)..."
+print_warning "🎨 Installing themes, icons, cursors, and fonts..."
 
-# === Install lxappearance for theming ===
+# === Install lxappearance for easy GTK theming ===
 print_info "📥 Installing lxappearance..."
-sudo pacman -S --noconfirm lxappearance
+if ! command -v lxappearance >/dev/null 2>&1; then
+    sudo pacman -S --noconfirm lxappearance
+else
+    print_info "lxappearance already installed, skipping."
+fi
 
 # === Setup directories ===
-mkdir -p ~/.themes ~/.icons
+mkdir -p ~/.themes ~/.icons ~/.local/share/fonts
 
 # === Install Sweet GTK Theme ===
 print_info "📦 Installing Sweet GTK theme..."
@@ -18,12 +22,16 @@ if [ ! -d "$HOME/.themes/Sweet-Dark" ]; then
     git clone https://github.com/EliverLara/Sweet.git /tmp/Sweet
     cp -r /tmp/Sweet/* ~/.themes/
     rm -rf /tmp/Sweet
+else
+    print_info "Sweet GTK theme already installed, skipping."
 fi
 
 # === Install Candy Icons ===
 print_info "📦 Installing Candy icons..."
 if [ ! -d "$HOME/.icons/Candy" ]; then
     git clone https://github.com/EliverLara/candy-icons.git ~/.icons/Candy
+else
+    print_info "Candy icons already installed, skipping."
 fi
 
 # === Install Sweet Cursors ===
@@ -32,12 +40,42 @@ if [ ! -d "$HOME/.icons/Sweet-cursors" ]; then
     git clone https://github.com/EliverLara/Sweet.git /tmp/SweetCursor
     cp -r /tmp/Sweet/cursors/Sweet-cursors ~/.icons/
     rm -rf /tmp/SweetCursor
+else
+    print_info "Sweet cursors already installed, skipping."
 fi
 
-# === Apply dark theme defaults (manually via settings.ini) ===
+# === Install Fonts (Noto, JetBrains Mono Nerd, Fira Code/Sans) ===
+print_info "🔤 Installing recommended fonts..."
+
+# Helper function to check if font is installed by fc-list
+font_installed() {
+    fc-list | grep -i "$1" >/dev/null 2>&1
+}
+
+if ! font_installed "JetBrainsMono Nerd Font"; then
+    print_info "Installing JetBrains Mono Nerd Font..."
+    sudo pacman -S --noconfirm ttf-jetbrains-mono-nerd
+else
+    print_info "JetBrains Mono Nerd Font already installed."
+fi
+
+if ! font_installed "Noto Sans"; then
+    print_info "Installing Noto fonts (Sans, CJK, Emoji)..."
+    sudo pacman -S --noconfirm noto-fonts noto-fonts-cjk noto-fonts-emoji
+else
+    print_info "Noto fonts already installed."
+fi
+
+if ! font_installed "Fira Code"; then
+    print_info "Installing Fira Code and Fira Sans..."
+    sudo pacman -S --noconfirm ttf-fira-code ttf-fira-sans
+else
+    print_info "Fira fonts already installed."
+fi
+
+# === Apply dark theme defaults (GTK 3/4 and cursor) ===
 print_info "🌓 Applying Dark theme defaults for GTK 3/4 and cursor..."
-mkdir -p ~/.config/gtk-3.0
-mkdir -p ~/.config/gtk-4.0
+mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
 
 cat <<EOF > ~/.config/gtk-3.0/settings.ini
 [Settings]
@@ -45,7 +83,7 @@ gtk-theme-name=Sweet-Dark
 gtk-icon-theme-name=Candy
 gtk-cursor-theme-name=Sweet-cursors
 gtk-cursor-theme-size=24
-gtk-font-name=Noto Sans 10
+gtk-font-name=JetBrainsMono Nerd Font 10
 EOF
 
 cp ~/.config/gtk-3.0/settings.ini ~/.config/gtk-4.0/settings.ini
@@ -55,12 +93,12 @@ gtk-theme-name="Sweet-Dark"
 gtk-icon-theme-name="Candy"
 gtk-cursor-theme-name="Sweet-cursors"
 gtk-cursor-theme-size=24
-gtk-font-name="Noto Sans 10"
+gtk-font-name="JetBrainsMono Nerd Font 10"
 EOF
 
-print_success "✅ Themes installed and applied (Dark mode)"
+print_success "✅ Themes, icons, cursors, and fonts installed and dark mode applied."
 
-# === Create toggle script for dark/light ===
+# === Create toggle script for dark/light themes ===
 mkdir -p ~/.config/scripts
 cat << 'EOF' > ~/.config/scripts/toggle-theme.sh
 #!/bin/bash
@@ -73,7 +111,7 @@ GTK3_FILE="$HOME/.config/gtk-3.0/settings.ini"
 GTK4_FILE="$HOME/.config/gtk-4.0/settings.ini"
 GTK2_FILE="$HOME/.gtkrc-2.0"
 
-CURRENT=$(grep gtk-theme-name "$GTK3_FILE" | cut -d= -f2)
+CURRENT=$(grep gtk-theme-name "$GTK3_FILE" | cut -d= -f2 | tr -d ' ')
 
 if [[ "$CURRENT" == "$DARK" ]]; then
     echo "Switching to Light theme..."
@@ -87,4 +125,4 @@ fi
 EOF
 
 chmod +x ~/.config/scripts/toggle-theme.sh
-print_success "🔁 Theme toggle available at ~/.config/scripts/toggle-theme.sh"
+print_success "🔁 Theme toggle script created at ~/.config/scripts/toggle-theme.sh"
