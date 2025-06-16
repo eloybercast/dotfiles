@@ -26,7 +26,7 @@ install_package() {
 setup_hyprland() {
     print_warning "Installing Hyprland and dependencies..."
     
-    local packages=("hyprland" "rofi" "mako" "xdg-desktop-portal-hyprland")
+    local packages=("hyprland" "rofi" "mako" "xdg-desktop-portal-hyprland" "kitty")
     for pkg in "${packages[@]}"; do
         install_package "$pkg"
     done
