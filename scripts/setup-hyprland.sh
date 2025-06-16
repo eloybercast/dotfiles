@@ -37,7 +37,7 @@ setup_hyprland() {
     fi
     mkdir -p "$HOME/.config/hypr"
 
-    local config_files=("hyprland.conf" "env.conf" "animations.conf" "keybinds.conf" "user.conf" "windowrules.conf")
+    local config_files=("hyprland.conf" "env.conf" "animations.conf" "keybinds.conf" "user.conf" "windowrules.conf" "lookandfeel.conf")
     for file in "${config_files[@]}"; do
         if [ -f "config/hyprland/$file" ]; then
             cp "config/hyprland/$file" "$HOME/.config/hypr/" || {
