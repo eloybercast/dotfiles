@@ -15,9 +15,8 @@ mkdir -p ~/.themes ~/.icons ~/.local/share/fonts
 
 print_info "📦 Installing Sweet GTK theme..."
 if [ ! -d "$HOME/.themes/Sweet-Dark" ]; then
-    git clone https://github.com/EliverLara/Sweet.git /tmp/Sweet
-    cp -r /tmp/Sweet/* ~/.themes/
-    rm -rf /tmp/Sweet
+    git clone https://github.com/EliverLara/Sweet.git ~/.themes/Sweet
+    cp -r ~/.themes/Sweet/Sweet-Dark ~/.themes/
 else
     print_info "Sweet GTK theme already installed, skipping."
 fi
@@ -32,7 +31,7 @@ fi
 print_info "🖱️ Installing Sweet cursors..."
 if [ ! -d "$HOME/.icons/Sweet-cursors" ]; then
     git clone https://github.com/EliverLara/Sweet.git /tmp/SweetCursor
-    cp -r /tmp/Sweet/cursors/Sweet-cursors ~/.icons/
+    cp -r /tmp/SweetCursor/cursors/Sweet-cursors ~/.icons/
     rm -rf /tmp/SweetCursor
 else
     print_info "Sweet cursors already installed, skipping."
