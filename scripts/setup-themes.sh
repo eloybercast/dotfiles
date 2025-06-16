@@ -6,7 +6,7 @@ source ~/.config/scripts/utils.sh 2>/dev/null || true
 print_warning "🎨 Installing themes, icons, cursors, and fonts..."
 
 # Ensure required tools are present
-for cmd in curl tar; do
+for cmd in curl tar git; do
     if ! command -v $cmd &>/dev/null; then
         echo "❌ Missing required tool: $cmd"
         exit 1
@@ -24,7 +24,6 @@ mkdir -p ~/.themes ~/.icons ~/.local/share/fonts
 
 ### --- Install Sweet-Dark GTK Theme ---
 print_info "📦 Installing Sweet GTK theme (Dark variant)..."
-
 if [ ! -d "$HOME/.themes/Sweet-Dark" ]; then
     TMPDIR=$(mktemp -d)
     curl -L https://github.com/EliverLara/Sweet/releases/download/v6.0/Sweet-Dark.tar.xz -o "$TMPDIR/Sweet-Dark.tar.xz"
@@ -35,24 +34,26 @@ else
     print_info "Sweet-Dark GTK theme already installed, skipping."
 fi
 
-### --- Install Candy Icons ---
-print_info "📦 Installing Candy icons..."
-if [ ! -d "$HOME/.icons/Candy" ]; then
-    git clone https://github.com/EliverLara/candy-icons.git ~/.icons/Candy
-else
-    print_info "Candy icons already installed, skipping."
-fi
-
-### --- Install Sweet Cursors ---
-print_info "🖱️ Installing Sweet cursors..."
-if [ ! -d "$HOME/.icons/Sweet-cursors" ]; then
+### --- Install Tela-circle Icons (Dark + Light) ---
+print_info "📦 Installing Tela-circle icons..."
+if [ ! -d "$HOME/.icons/Tela-circle-dark" ]; then
     TMPDIR=$(mktemp -d)
-    curl -L https://github.com/EliverLara/Sweet/releases/download/v6.0/Sweet-Dark.tar.xz -o "$TMPDIR/Sweet-Dark.tar.xz"
-    tar -xf "$TMPDIR/Sweet-Dark.tar.xz" -C "$TMPDIR"
-    cp -r "$TMPDIR/Sweet-Dark/cursors/Sweet-cursors" ~/.icons/
+    git clone --depth=1 https://github.com/vinceliuice/Tela-circle-icon-theme.git "$TMPDIR"
+    "$TMPDIR"/install.sh -d ~/.icons -a
     rm -rf "$TMPDIR"
 else
-    print_info "Sweet cursors already installed, skipping."
+    print_info "Tela-circle icons already installed, skipping."
+fi
+
+### --- Install Bibata Cursors ---
+print_info "🖱️ Installing Bibata cursors..."
+if [ ! -d "$HOME/.icons/Bibata-Modern-Classic" ]; then
+    TMPDIR=$(mktemp -d)
+    git clone --depth=1 https://github.com/ful1e5/Bibata_Cursor.git "$TMPDIR"
+    cp -r "$TMPDIR/Bibata-Modern-"* ~/.icons/
+    rm -rf "$TMPDIR"
+else
+    print_info "Bibata cursors already installed, skipping."
 fi
 
 ### --- Fonts ---
@@ -83,7 +84,7 @@ else
     print_info "Fira fonts already installed."
 fi
 
-### --- Apply GTK settings ---
+### --- Apply GTK Settings ---
 print_info "🌓 Applying Dark theme defaults for GTK 3/4 and cursor..."
 
 mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
@@ -91,8 +92,8 @@ mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
 cat <<EOF > ~/.config/gtk-3.0/settings.ini
 [Settings]
 gtk-theme-name=Sweet-Dark
-gtk-icon-theme-name=Candy
-gtk-cursor-theme-name=Sweet-cursors
+gtk-icon-theme-name=Tela-circle-dark
+gtk-cursor-theme-name=Bibata-Modern-Classic
 gtk-cursor-theme-size=24
 gtk-font-name=JetBrainsMono Nerd Font 10
 EOF
@@ -101,8 +102,8 @@ cp ~/.config/gtk-3.0/settings.ini ~/.config/gtk-4.0/settings.ini
 
 cat <<EOF > ~/.gtkrc-2.0
 gtk-theme-name="Sweet-Dark"
-gtk-icon-theme-name="Candy"
-gtk-cursor-theme-name="Sweet-cursors"
+gtk-icon-theme-name="Tela-circle-dark"
+gtk-cursor-theme-name="Bibata-Modern-Classic"
 gtk-cursor-theme-size=24
 gtk-font-name="JetBrainsMono Nerd Font 10"
 EOF
@@ -116,8 +117,9 @@ cat << 'EOF' > ~/.config/scripts/toggle-theme.sh
 
 DARK="Sweet-Dark"
 LIGHT="Sweet"
-ICON="Candy"
-CURSOR="Sweet-cursors"
+ICON_DARK="Tela-circle-dark"
+ICON_LIGHT="Tela-circle-light"
+CURSOR="Bibata-Modern-Classic"
 GTK3_FILE="$HOME/.config/gtk-3.0/settings.ini"
 GTK4_FILE="$HOME/.config/gtk-4.0/settings.ini"
 GTK2_FILE="$HOME/.gtkrc-2.0"
@@ -127,12 +129,18 @@ CURRENT=$(grep gtk-theme-name "$GTK3_FILE" | cut -d= -f2 | tr -d ' ')
 if [[ "$CURRENT" == "$DARK" ]]; then
     echo "Switching to Light theme..."
     sed -i "s/gtk-theme-name=.*/gtk-theme-name=$LIGHT/" "$GTK3_FILE" "$GTK4_FILE"
+    sed -i "s/gtk-icon-theme-name=.*/gtk-icon-theme-name=$ICON_LIGHT/" "$GTK3_FILE" "$GTK4_FILE"
     sed -i "s/gtk-theme-name=.*/gtk-theme-name=\"$LIGHT\"/" "$GTK2_FILE"
+    sed -i "s/gtk-icon-theme-name=.*/gtk-icon-theme-name=\"$ICON_LIGHT\"/" "$GTK2_FILE"
 else
     echo "Switching to Dark theme..."
     sed -i "s/gtk-theme-name=.*/gtk-theme-name=$DARK/" "$GTK3_FILE" "$GTK4_FILE"
+    sed -i "s/gtk-icon-theme-name=.*/gtk-icon-theme-name=$ICON_DARK/" "$GTK3_FILE" "$GTK4_FILE"
     sed -i "s/gtk-theme-name=.*/gtk-theme-name=\"$DARK\"/" "$GTK2_FILE"
+    sed -i "s/gtk-icon-theme-name=.*/gtk-icon-theme-name=\"$ICON_DARK\"/" "$GTK2_FILE"
 fi
+
+# cursor stays the same
 EOF
 
 chmod +x ~/.config/scripts/toggle-theme.sh
