@@ -1,11 +1,20 @@
 #!/bin/bash
+set -e
 
 source ~/.config/scripts/utils.sh 2>/dev/null || true
 
 print_warning "🎨 Installing themes, icons, cursors, and fonts..."
 
+# Ensure required tools are present
+for cmd in curl tar; do
+    if ! command -v $cmd &>/dev/null; then
+        echo "❌ Missing required tool: $cmd"
+        exit 1
+    fi
+done
+
 print_info "📥 Installing lxappearance..."
-if ! command -v lxappearance >/dev/null 2>&1; then
+if ! command -v lxappearance &>/dev/null; then
     sudo pacman -S --noconfirm lxappearance
 else
     print_info "lxappearance already installed, skipping."
@@ -13,14 +22,20 @@ fi
 
 mkdir -p ~/.themes ~/.icons ~/.local/share/fonts
 
-print_info "📦 Installing Sweet GTK theme..."
+### --- Install Sweet-Dark GTK Theme ---
+print_info "📦 Installing Sweet GTK theme (Dark variant)..."
+
 if [ ! -d "$HOME/.themes/Sweet-Dark" ]; then
-    git clone https://github.com/EliverLara/Sweet.git ~/.themes/Sweet
-    cp -r ~/.themes/Sweet/Sweet-Dark ~/.themes/
+    TMPDIR=$(mktemp -d)
+    curl -L https://github.com/EliverLara/Sweet/releases/download/v6.0/Sweet-Dark.tar.xz -o "$TMPDIR/Sweet-Dark.tar.xz"
+    tar -xf "$TMPDIR/Sweet-Dark.tar.xz" -C "$TMPDIR"
+    mv "$TMPDIR/Sweet-Dark" ~/.themes/
+    rm -rf "$TMPDIR"
 else
-    print_info "Sweet GTK theme already installed, skipping."
+    print_info "Sweet-Dark GTK theme already installed, skipping."
 fi
 
+### --- Install Candy Icons ---
 print_info "📦 Installing Candy icons..."
 if [ ! -d "$HOME/.icons/Candy" ]; then
     git clone https://github.com/EliverLara/candy-icons.git ~/.icons/Candy
@@ -28,19 +43,23 @@ else
     print_info "Candy icons already installed, skipping."
 fi
 
+### --- Install Sweet Cursors ---
 print_info "🖱️ Installing Sweet cursors..."
 if [ ! -d "$HOME/.icons/Sweet-cursors" ]; then
-    git clone https://github.com/EliverLara/Sweet.git /tmp/SweetCursor
-    cp -r /tmp/SweetCursor/cursors/Sweet-cursors ~/.icons/
-    rm -rf /tmp/SweetCursor
+    TMPDIR=$(mktemp -d)
+    curl -L https://github.com/EliverLara/Sweet/releases/download/v6.0/Sweet-Dark.tar.xz -o "$TMPDIR/Sweet-Dark.tar.xz"
+    tar -xf "$TMPDIR/Sweet-Dark.tar.xz" -C "$TMPDIR"
+    cp -r "$TMPDIR/Sweet-Dark/cursors/Sweet-cursors" ~/.icons/
+    rm -rf "$TMPDIR"
 else
     print_info "Sweet cursors already installed, skipping."
 fi
 
+### --- Fonts ---
 print_info "🔤 Installing recommended fonts..."
 
 font_installed() {
-    fc-list | grep -i "$1" >/dev/null 2>&1
+    fc-list | grep -i "$1" &>/dev/null
 }
 
 if ! font_installed "JetBrainsMono Nerd Font"; then
@@ -64,7 +83,9 @@ else
     print_info "Fira fonts already installed."
 fi
 
+### --- Apply GTK settings ---
 print_info "🌓 Applying Dark theme defaults for GTK 3/4 and cursor..."
+
 mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
 
 cat <<EOF > ~/.config/gtk-3.0/settings.ini
@@ -88,6 +109,7 @@ EOF
 
 print_success "✅ Themes, icons, cursors, and fonts installed and dark mode applied."
 
+### --- Create toggle script ---
 mkdir -p ~/.config/scripts
 cat << 'EOF' > ~/.config/scripts/toggle-theme.sh
 #!/bin/bash
