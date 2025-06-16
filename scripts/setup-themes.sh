@@ -18,6 +18,7 @@ gtk-icon-theme-name=$DARK_ICON
 gtk-cursor-theme-name=$CURSOR
 gtk-cursor-theme-size=24
 gtk-font-name=$FONT
+gtk-application-prefer-dark-theme=1
 EOF
 
 cp ~/.config/gtk-3.0/settings.ini ~/.config/gtk-4.0/settings.ini
