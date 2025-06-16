@@ -30,11 +30,12 @@ setup_zsh() {
     print_success "✅ Zsh setup complete"
 }
 
-setup_thunar() {
-    print_warning "⚙️ Step 4: Setting up Thunar..."
-    bash scripts/setup-thunar.sh
-    print_success "✅ Thunar setup complete"
+setup_nautilus() {
+    print_warning "⚙️ Step 4: Setting up Nautilus..."
+    bash scripts/setup-nautilus.sh
+    print_success "✅ Nautilus setup complete"
 }
+
 
 setup_apps() {
     print_warning "⚙️ Step 5: Setting up Apps..."
@@ -53,7 +54,7 @@ setup_all() {
     setup_hyprland
     setup_waybar
     setup_zsh
-    setup_thunar
+    setup_nautilus
     setup_apps
     setup_themes
 }
@@ -62,13 +63,13 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Hyprland" "Waybar" "Zsh" "Thunar" "Apps" "Themes" "All" "Quit")
+    options=("Hyprland" "Waybar" "Zsh" "Nautilus" "Apps" "Themes" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Hyprland") setup_hyprland ;;
             "Waybar") setup_waybar ;;
             "Zsh") setup_zsh ;;
-            "Thunar") setup_thunar ;;
+            "Nautilus") setup_nautilus ;;
             "Apps") setup_apps ;;
             "Themes") setup_themes ;;
             "All") setup_all; break ;;
@@ -84,11 +85,11 @@ show_help() {
     echo -e "\e[34mEloy Bermejo's Arch Hyprland Dotfiles Setup\e[0m"
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --all         Install all components (Hyprland, Waybar, Zsh, Thunar, Apps, Themes)"
+    echo "  --all         Install all components (Hyprland, Waybar, Zsh, Nautilus, Apps, Themes)"
     echo "  --hyprland    Install Hyprland and keybindings"
     echo "  --waybar      Install Waybar with icons and visualizer"
     echo "  --zsh         Install Zsh and terminal emulator"
-    echo "  --thunar      Install Thunar file manager"
+    echo "  --nautilus    Install Nautilus file manager"
     echo "  --apps        Install browser, editor, and dev tools"
     echo "  --themes      Install wallpapers, music, and themes"
     echo "  --interactive Interactive mode with menu"
@@ -102,7 +103,7 @@ while [[ $# -gt 0 ]]; do
         --hyprland) setup_hyprland; shift ;;
         --waybar) setup_waybar; shift ;;
         --zsh) setup_zsh; shift ;;
-        --thunar) setup_thunar; shift ;;
+        --nautilus) setup_nautilus; shift ;;
         --apps) setup_apps; shift ;;
         --themes) setup_themes; shift ;;
         --interactive) interactive_mode; shift ;;
