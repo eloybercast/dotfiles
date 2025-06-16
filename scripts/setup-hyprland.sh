@@ -13,9 +13,7 @@ install_package() {
         print_success "$pkg is already installed"
     else
         print_warning "Installing $pkg..."
-        sudo pacman -S --noconfirm "$pkg" &>/dev/null &
-        spinner $!
-        wait $!
+        sudo pacman -S --noconfirm "$pkg"
         if is_package_installed "$pkg"; then
             print_success "$pkg installed successfully"
         else

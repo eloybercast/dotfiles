@@ -12,18 +12,8 @@ print_warning() {
     echo -e "\e[33m$1\e[0m"
 }
 
-spinner() {
-    local pid=$1
-    local delay=0.1
-    local spinstr='|/-\'
-    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
-        local temp=${spinstr#?}
-        printf " [%c]  " "$spinstr"
-        local spinstr=$temp${spinstr%"$temp"}
-        sleep $delay
-        printf "\b\b\b\b\b\b"
-    done
-    printf "    \b\b\b\b"
+print_info() {
+    echo -e "\e[36m$1\e[0m"
 }
 
 print_ascii_art() {
