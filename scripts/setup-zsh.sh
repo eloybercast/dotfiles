@@ -30,15 +30,9 @@ require_dependency() {
 }
 
 install_oh_my_posh() {
-    if command -v oh-my-posh &>/dev/null; then
-        print_success "oh-my-posh already installed"
-        return
-    fi
-
-    print_warning "Installing oh-my-posh..."
+    print_info "Installing Oh My Posh..."
     
-    local tmp_dir=$(mktemp -d)
-    cd "$tmp_dir"
+    mkdir -p "$HOME/.local/bin"
     
     local ARCH="amd64"
     if [[ $(uname -m) == "aarch64" ]]; then
@@ -47,22 +41,15 @@ install_oh_my_posh() {
     
     print_info "Downloading oh-my-posh for Linux $ARCH..."
     local DOWNLOAD_URL="https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$ARCH"
-    wget -q "$DOWNLOAD_URL" -O oh-my-posh
     
-    if [ $? -ne 0 ]; then
-        print_error "Failed to download oh-my-posh"
-        cd - > /dev/null
-        rm -rf "$tmp_dir"
-        exit 1
+    curl -sL "$DOWNLOAD_URL" -o "$HOME/.local/bin/oh-my-posh"
+    chmod +x "$HOME/.local/bin/oh-my-posh"
+    
+    if ! grep -q "PATH=\"\$HOME/.local/bin:\$PATH\"" "$HOME/.zshrc" 2>/dev/null; then
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zshrc"
     fi
     
-    chmod +x oh-my-posh
-    sudo mv oh-my-posh /usr/local/bin/
-    
-    cd - > /dev/null
-    rm -rf "$tmp_dir"
-    
-    if command -v oh-my-posh &>/dev/null; then
+    if [ -x "$HOME/.local/bin/oh-my-posh" ]; then
         print_success "oh-my-posh installed successfully"
     else
         print_error "oh-my-posh installation failed"
@@ -201,15 +188,23 @@ write_zshrc() {
     cat > "$HOME/.zshrc" <<EOF
 # ZSH Configuration for Eloy Bermejo's dotfiles
 
+# Add local bin to PATH
+export PATH="\$HOME/.local/bin:\$PATH"
+
+# Set ZSH custom directory
 ZSH_CUSTOM="\$HOME/.zsh"
 
 # Load plugins
-source \$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source \$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh
-source \$ZSH_CUSTOM/z/z.sh
+[ -f "\$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "\$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+[ -f "\$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && source "\$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[ -f "\$ZSH_CUSTOM/z/z.sh" ] && source "\$ZSH_CUSTOM/z/z.sh"
 
 # Initialize oh-my-posh with theme
-eval "\$(oh-my-posh init zsh --config $theme_path)"
+if [ -x "\$HOME/.local/bin/oh-my-posh" ]; then
+    eval "\$(\$HOME/.local/bin/oh-my-posh init zsh --config $theme_path)"
+else
+    echo "Warning: oh-my-posh not found in \$HOME/.local/bin"
+fi
 
 # Completion system
 autoload -U compinit && compinit
@@ -222,9 +217,36 @@ bindkey -v
 
 # Environment variables
 export EDITOR=nano
+
+# Aliases
+alias ls='ls --color=auto'
+alias ll='ls -la'
+alias la='ls -a'
+alias grep='grep --color=auto'
 EOF
 
     print_success ".zshrc configured successfully"
+}
+
+install_nerd_fonts() {
+    print_info "Installing Nerd Fonts for proper symbol rendering..."
+    
+    tmp_dir=$(mktemp -d)
+    cd "$tmp_dir"
+    
+    wget -q "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip"
+    unzip -q FiraCode.zip -d firacode
+    
+    mkdir -p ~/.local/share/fonts
+    
+    cp -f firacode/*.ttf ~/.local/share/fonts/
+    
+    fc-cache -f
+    
+    cd - > /dev/null
+    rm -rf "$tmp_dir"
+    
+    print_success "✅ Nerd Fonts installed for proper symbol rendering."
 }
 
 main() {
@@ -238,6 +260,7 @@ main() {
     setup_plugins
     theme_path=$(setup_theme)
     write_zshrc "$theme_path"
+    install_nerd_fonts
 
     print_info "Changing your default shell to zsh..."
     if chsh -s "$(which zsh)"; then

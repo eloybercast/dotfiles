@@ -15,7 +15,7 @@ backup_and_copy() {
     mkdir -p "$(dirname "$dest_path")"
 
     if [ -d "$src_path" ]; then
-        cp -r "$src_path" "$dest_path"
+        cp -r "$src_path"/* "$dest_path"
     else
         cp "$src_path" "$dest_path"
     fi
@@ -30,14 +30,21 @@ copy_recursive() {
     for path in "$base_src_dir"/* "$base_src_dir"/.*; do
         local name=$(basename "$path")
 
-        if [[ "$name" == "." || "$name" == ".." || "$name" == "scripts" ]]; then
+        if [[ "$name" == "." || "$name" == ".." ]]; then
             continue
         fi
 
         local rel_path="${path#$base_src_dir/}"
         local dest_path="$base_dest_dir/$rel_path"
 
-        backup_and_copy "$path" "$dest_path"
+        if [ -d "$path" ]; then
+            mkdir -p "$dest_path"
+            cp -r "$path"/* "$dest_path"
+            print_success "Copied directory $path to $dest_path"
+        else
+            cp "$path" "$dest_path"
+            print_success "Copied file $path to $dest_path"
+        fi
     done
 }
 
@@ -50,7 +57,16 @@ main() {
         exit 1
     fi
 
+    print_info "Copying configuration files to $target_dir..."
     copy_recursive "$config_dir" "$target_dir"
+    
+    # Ensure scripts directory is executable
+    if [ -d "$target_dir/scripts" ]; then
+        print_info "Making scripts executable..."
+        find "$target_dir/scripts" -type f -name "*.sh" -exec chmod +x {} \;
+    fi
+    
+    print_success "✅ Configuration files copied successfully"
 }
 
 main

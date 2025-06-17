@@ -12,43 +12,43 @@ show_welcome() {
 }
 
 setup_browser() {
-    print_warning "⚙️ Step 1: Setting up Browser..."
+    print_warning "⚙️ Setting up Browser..."
     bash scripts/setup-browser.sh
     print_success "✅ Browser setup complete"
 }
 
 setup_hyprland() {
-    print_warning "⚙️ Step 1: Setting up Hyprland..."
+    print_warning "⚙️ Setting up Hyprland..."
     bash scripts/setup-hyprland.sh
     print_success "✅ Hyprland setup complete"
 }
 
 setup_waybar() {
-    print_warning "⚙️ Step 2: Setting up Waybar..."
+    print_warning "⚙️ Setting up Waybar..."
     bash scripts/setup-waybar.sh
     print_success "✅ Waybar setup complete"
 }
 
 setup_zsh() {
-    print_warning "⚙️ Step 3: Setting up Zsh..."
+    print_warning "⚙️ Setting up Zsh and Oh My Posh..."
     bash scripts/setup-zsh.sh
-    print_success "✅ Zsh setup complete"
+    print_success "✅ Zsh and Oh My Posh setup complete"
 }
 
 setup_kitty() {
-    print_warning "⚙️ Step 4: Setting up Kitty terminal..."
+    print_warning "⚙️ Setting up Kitty terminal..."
     bash scripts/setup-kitty.sh
     print_success "✅ Kitty terminal setup complete"
 }
 
 setup_nautilus() {
-    print_warning "⚙️ Step 5: Setting up Nautilus..."
+    print_warning "⚙️ Setting up Nautilus..."
     bash scripts/setup-nautilus.sh
     print_success "✅ Nautilus setup complete"
 }
 
 setup_themes() {
-    print_warning "⚙️ Step 6: Setting up Themes..."
+    print_warning "⚙️ Setting up Themes..."
     bash scripts/setup-themes.sh
     print_success "✅ Themes setup complete"
 }
@@ -67,18 +67,24 @@ setup_config_files() {
 
 setup_all() {
     show_welcome
+    
+    setup_zsh
+    
     setup_browser
     setup_hyprland
     setup_waybar
-    setup_zsh
     setup_kitty
     setup_nautilus
     setup_themes
     setup_scripts
+    
     setup_config_files
+    
+    print_success "✅✅✅ All components installed successfully! ✅✅✅"
+    print_info "Please log out and log back in to start using your new environment."
+    print_info "Or run 'exec zsh' to start using zsh in the current session."
 }
 
-# Interactive mode with menu
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
@@ -101,7 +107,6 @@ interactive_mode() {
     done
 }
 
-# Help message
 show_help() {
     print_ascii_art
     echo -e "\e[34mEloy Bermejo's Arch Hyprland Dotfiles Setup\e[0m"
@@ -121,7 +126,6 @@ show_help() {
     echo "  --help        Show this help message"
 }
 
-# Parse command-line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
         --all) setup_all; shift ;;
