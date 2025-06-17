@@ -18,6 +18,17 @@ install_package() {
     fi
 }
 
+require_dependency() {
+    for dep in "$@"; do
+        if ! command -v "$dep" &>/dev/null; then
+            print_warning "$dep is missing, installing..."
+            install_package "$dep"
+        else
+            print_success "$dep is already installed"
+        fi
+    done
+}
+
 install_oh_my_posh() {
     if command -v oh-my-posh &>/dev/null; then
         print_success "oh-my-posh already installed"
