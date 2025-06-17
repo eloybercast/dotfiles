@@ -42,7 +42,7 @@ install_oh_my_posh() {
     else
         print_warning "yay not found, installing oh-my-posh manually..."
 
-        ARCH="amd64" # adjust if you use arm64 or other
+        ARCH="amd64"
 
         LATEST_URL=$(curl -s https://api.github.com/repos/JanDeDobbeleer/oh-my-posh/releases/latest \
             | grep "browser_download_url.*linux-$ARCH" \
@@ -116,20 +116,16 @@ write_zshrc() {
     fi
 
     cat > "$HOME/.zshrc" <<EOF
-# Custom zsh config with oh-my-posh and plugins
+
 
 ZSH_CUSTOM="\$HOME/.zsh"
 
-# Syntax highlighting
 source \$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Autosuggestions
 source \$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-# z jumping
 source \$ZSH_CUSTOM/z/z.sh
 
-# oh-my-posh prompt
 eval "\$(oh-my-posh init zsh --config $pastel_theme_path)"
 
 autoload -U compinit && compinit
