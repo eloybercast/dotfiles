@@ -13,9 +13,8 @@ else
     print_info "kitty is already installed, skipping installation."
 fi
 
+# Create config directory placeholder if it doesn't exist
+# The actual config will be copied by setup-config-files.sh
 mkdir -p ~/.config/kitty
 
-print_info "Configuring kitty terminal..."
-cp -r config/kitty/* ~/.config/kitty/
-
-print_success "✅ kitty terminal configured with zsh as default shell." 
+print_success "✅ kitty terminal installed. Configuration will be applied by setup-config-files.sh" 
