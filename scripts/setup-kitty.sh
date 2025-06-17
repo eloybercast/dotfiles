@@ -13,8 +13,6 @@ else
     print_info "kitty is already installed, skipping installation."
 fi
 
-# Create config directory placeholder if it doesn't exist
-# The actual config will be copied by setup-config-files.sh
 mkdir -p ~/.config/kitty
 
 print_success "✅ kitty terminal installed. Configuration will be applied by setup-config-files.sh" 
