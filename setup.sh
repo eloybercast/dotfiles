@@ -53,6 +53,12 @@ setup_scripts() {
     print_success "✅ Scripts setup complete"
 }
 
+setup_config_files() {
+    print_warning "⚙️ Setting up Config Files..."
+    bash scripts/setup-config-files.sh
+    print_success "✅ Config Files setup complete"
+}
+
 setup_all() {
     show_welcome
     setup_browser
@@ -62,13 +68,14 @@ setup_all() {
     setup_nautilus
     setup_themes
     setup_scripts
+    setup_config_files
 }
 
 # Interactive mode with menu
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Browser" "Hyprland" "Waybar" "Zsh" "Nautilus" "Themes" "Scripts" "All" "Quit")
+    options=("Browser" "Hyprland" "Waybar" "Zsh" "Nautilus" "Themes" "Scripts" "Config Files" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Browser") setup_browser ;;
@@ -78,6 +85,7 @@ interactive_mode() {
             "Nautilus") setup_nautilus ;;
             "Themes") setup_themes ;;
             "Scripts") setup_scripts ;;
+            "Config Files") setup_config_files ;;
             "All") setup_all; break ;;
             "Quit") break ;;
             *) echo "Invalid option" ;;
@@ -99,6 +107,7 @@ show_help() {
     echo "  --nautilus    Install Nautilus file manager"
     echo "  --themes      Install wallpapers, music, and themes"
     echo "  --scripts     Install scripts to user config directory"
+    echo "  --config-files Install config files to user config directory"
     echo "  --interactive Interactive mode with menu"
     echo "  --help        Show this help message"
 }
@@ -114,6 +123,7 @@ while [[ $# -gt 0 ]]; do
         --nautilus) setup_nautilus; shift ;;
         --themes) setup_themes; shift ;;
         --scripts) setup_scripts; shift ;;
+        --config-files) setup_config_files; shift ;;
         --interactive) interactive_mode; shift ;;
         --help) show_help; exit 0 ;;
         *) print_error "Unknown option: $1"; show_help; exit 1 ;;

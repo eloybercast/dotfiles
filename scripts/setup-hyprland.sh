@@ -30,25 +30,6 @@ setup_hyprland() {
     for pkg in "${packages[@]}"; do
         install_package "$pkg"
     done
-
-    if [ -d "$HOME/.config/hypr" ]; then
-        print_warning "Hyprland config directory exists, backing up..."
-        mv "$HOME/.config/hypr" "$HOME/.config/hypr.bak-$(date +%F_%T)"
-    fi
-    mkdir -p "$HOME/.config/hypr"
-
-    local config_files=("hyprland.conf" "env.conf" "animations.conf" "keybinds.conf" "user.conf" "windowrules.conf" "lookandfeel.conf")
-    for file in "${config_files[@]}"; do
-        if [ -f "config/hyprland/$file" ]; then
-            cp "config/hyprland/$file" "$HOME/.config/hypr/" || {
-                print_error "Failed to copy $file"
-                exit 1
-            }
-            print_success "$file copied successfully"
-        else
-            print_warning "Configuration file config/hyprland/$file not found, skipping..."
-        fi
-    done
 }
 
 setup_hyprland
