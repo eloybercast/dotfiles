@@ -97,7 +97,6 @@ setup_theme() {
     local pastel_theme="$theme_dir/hunk-pastel.json"
     print_info "Applying pastel color palette..."
 
-    # Colors replaced with soft pastel palette and good contrast
     sed -e 's/#4e88eb/#a8dadc/g' \
         -e 's/#e36262/#f4a261/g' \
         -e 's/#d6d6d6/#f1faee/g' \
@@ -164,6 +163,9 @@ main() {
     else
         print_warning "Could not change the default shell automatically. Please run 'chsh -s $(which zsh)' manually."
     fi
+
+    print_info "Switching current shell session to zsh..."
+    exec "$(which zsh)" -l
 
     print_success "Setup complete! To start using zsh now, run:"
     echo "  source ~/.zshrc"
