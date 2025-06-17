@@ -19,11 +19,40 @@ install_package() {
 }
 
 install_oh_my_posh() {
-    if ! command -v oh-my-posh &>/dev/null; then
-        print_warning "Installing oh-my-posh..."
-        install_package oh-my-posh
-    else
+    if command -v oh-my-posh &>/dev/null; then
         print_success "oh-my-posh already installed"
+        return
+    fi
+
+    if command -v yay &>/dev/null; then
+        print_info "Installing oh-my-posh-bin from AUR via yay..."
+        yay -S --noconfirm oh-my-posh-bin
+        print_success "oh-my-posh installed"
+    else
+        print_warning "yay not found, installing oh-my-posh manually..."
+
+        ARCH="amd64" # adjust if you use arm64 or other
+
+        LATEST_URL=$(curl -s https://api.github.com/repos/JanDeDobbeleer/oh-my-posh/releases/latest \
+            | grep "browser_download_url.*linux-$ARCH" \
+            | cut -d : -f 2,3 \
+            | tr -d \")
+
+        if [[ -z "$LATEST_URL" ]]; then
+            print_error "Failed to find oh-my-posh download URL"
+            exit 1
+        fi
+
+        wget -O oh-my-posh "$LATEST_URL"
+        chmod +x oh-my-posh
+        sudo mv oh-my-posh /usr/local/bin/oh-my-posh
+
+        if command -v oh-my-posh &>/dev/null; then
+            print_success "oh-my-posh installed successfully"
+        else
+            print_error "oh-my-posh installation failed"
+            exit 1
+        fi
     fi
 }
 
@@ -55,7 +84,9 @@ setup_theme() {
     oh-my-posh get themes/hunk > "$theme_dir/hunk.json"
 
     local pastel_theme="$theme_dir/hunk-pastel.json"
-    print_info "Applying pastel color palette using sed..."
+    print_info "Applying pastel color palette..."
+
+    # Colors replaced with soft pastel palette and good contrast
     sed -e 's/#4e88eb/#a8dadc/g' \
         -e 's/#e36262/#f4a261/g' \
         -e 's/#d6d6d6/#f1faee/g' \
@@ -108,7 +139,7 @@ main() {
     print_ascii_art
     print_info "Starting zsh + oh-my-posh setup..."
 
-    require_dependency git curl sed
+    require_dependency git curl sed wget
 
     install_package zsh
     install_oh_my_posh
@@ -116,7 +147,7 @@ main() {
     pastel_theme_path=$(setup_theme)
     write_zshrc "$pastel_theme_path"
 
-    print_success "Setup complete! You can change your shell to zsh with:"
+    print_success "Setup complete! To start using zsh:"
     echo "  chsh -s \$(which zsh)"
     echo "Then restart your terminal or run:"
     echo "  source ~/.zshrc"
