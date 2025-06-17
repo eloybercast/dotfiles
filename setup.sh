@@ -11,7 +11,12 @@ show_welcome() {
     echo
 }
 
-# Component setup functions
+setup_browser() {
+    print_warning "⚙️ Step 1: Setting up Browser..."
+    bash scripts/setup-browser.sh
+    print_success "✅ Browser setup complete"
+}
+
 setup_hyprland() {
     print_warning "⚙️ Step 1: Setting up Hyprland..."
     bash scripts/setup-hyprland.sh
@@ -50,6 +55,7 @@ setup_scripts() {
 
 setup_all() {
     show_welcome
+    setup_browser
     setup_hyprland
     setup_waybar
     setup_zsh
@@ -62,9 +68,10 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Hyprland" "Waybar" "Zsh" "Nautilus" "Themes" "Scripts" "All" "Quit")
+    options=("Browser" "Hyprland" "Waybar" "Zsh" "Nautilus" "Themes" "Scripts" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
+            "Browser") setup_browser ;;
             "Hyprland") setup_hyprland ;;
             "Waybar") setup_waybar ;;
             "Zsh") setup_zsh ;;
@@ -84,7 +91,8 @@ show_help() {
     echo -e "\e[34mEloy Bermejo's Arch Hyprland Dotfiles Setup\e[0m"
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --all         Install all components (Hyprland, Waybar, Zsh, Nautilus, Themes, Scripts)"
+    echo "  --all         Install all components (Browser, Hyprland, Waybar, Zsh, Nautilus, Themes, Scripts)"
+    echo "  --browser     Install Browser"
     echo "  --hyprland    Install Hyprland and keybindings"
     echo "  --waybar      Install Waybar with icons and visualizer"
     echo "  --zsh         Install Zsh and terminal emulator"
@@ -99,6 +107,7 @@ show_help() {
 while [[ $# -gt 0 ]]; do
     case $1 in
         --all) setup_all; shift ;;
+        --browser) setup_browser; shift ;;
         --hyprland) setup_hyprland; shift ;;
         --waybar) setup_waybar; shift ;;
         --zsh) setup_zsh; shift ;;
