@@ -49,6 +49,12 @@ setup_themes() {
     print_success "✅ Themes setup complete"
 }
 
+setup_scripts() {
+    print_warning "⚙️ Setting up Scripts..."
+    bash scripts/setup-scripts.sh
+    print_success "✅ Scripts setup complete"
+}
+
 setup_all() {
     show_welcome
     setup_hyprland
@@ -57,13 +63,14 @@ setup_all() {
     setup_nautilus
     setup_apps
     setup_themes
+    setup_scripts
 }
 
 # Interactive mode with menu
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Hyprland" "Waybar" "Zsh" "Nautilus" "Apps" "Themes" "All" "Quit")
+    options=("Hyprland" "Waybar" "Zsh" "Nautilus" "Apps" "Themes" "Scripts" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Hyprland") setup_hyprland ;;
@@ -72,6 +79,7 @@ interactive_mode() {
             "Nautilus") setup_nautilus ;;
             "Apps") setup_apps ;;
             "Themes") setup_themes ;;
+            "Scripts") setup_scripts ;;
             "All") setup_all; break ;;
             "Quit") break ;;
             *) echo "Invalid option" ;;
@@ -85,13 +93,14 @@ show_help() {
     echo -e "\e[34mEloy Bermejo's Arch Hyprland Dotfiles Setup\e[0m"
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --all         Install all components (Hyprland, Waybar, Zsh, Nautilus, Apps, Themes)"
+    echo "  --all         Install all components (Hyprland, Waybar, Zsh, Nautilus, Apps, Themes, Scripts)"
     echo "  --hyprland    Install Hyprland and keybindings"
     echo "  --waybar      Install Waybar with icons and visualizer"
     echo "  --zsh         Install Zsh and terminal emulator"
     echo "  --nautilus    Install Nautilus file manager"
     echo "  --apps        Install browser, editor, and dev tools"
     echo "  --themes      Install wallpapers, music, and themes"
+    echo "  --scripts     Install scripts to user config directory"
     echo "  --interactive Interactive mode with menu"
     echo "  --help        Show this help message"
 }
@@ -106,6 +115,7 @@ while [[ $# -gt 0 ]]; do
         --nautilus) setup_nautilus; shift ;;
         --apps) setup_apps; shift ;;
         --themes) setup_themes; shift ;;
+        --scripts) setup_scripts; shift ;;
         --interactive) interactive_mode; shift ;;
         --help) show_help; exit 0 ;;
         *) print_error "Unknown option: $1"; show_help; exit 1 ;;
