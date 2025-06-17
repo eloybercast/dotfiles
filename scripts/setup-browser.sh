@@ -3,7 +3,18 @@ set -e
 
 source scripts/utils.sh
 
-require_dependency git base-devel xdg-settings
+install_dependency() {
+    if ! command -v "$1" &>/dev/null; then
+        print_info "Installing dependency: $1"
+        sudo pacman -S --needed --noconfirm "$1"
+    else
+        print_info "Dependency $1 already installed."
+    fi
+}
+
+install_dependency git
+install_dependency base-devel
+install_dependency xdg-utils
 
 print_info "📦 Installing Brave browser from the AUR..."
 
