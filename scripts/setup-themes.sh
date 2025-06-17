@@ -4,7 +4,7 @@ set -e
 DARK_THEME="Adwaita-dark"
 DARK_ICON="Papirus-Dark"
 CURSOR="Bibata-Modern-Ice"
-FONT="JetBrainsMono Nerd Font 10"
+FONT="Ubuntu 10"
 
 echo "🎨 Applying Dark theme settings for GTK 3/4 and GTK 2..."
 
@@ -30,4 +30,4 @@ gtk-cursor-theme-size=24
 gtk-font-name="$FONT"
 EOF
 
-echo "✅ Dark theme applied."
+echo "✅ Dark theme applied with Ubuntu font."
