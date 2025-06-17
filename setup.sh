@@ -36,13 +36,6 @@ setup_nautilus() {
     print_success "✅ Nautilus setup complete"
 }
 
-
-setup_apps() {
-    print_warning "⚙️ Step 5: Setting up Apps..."
-    bash scripts/setup-apps.sh
-    print_success "✅ Apps setup complete"
-}
-
 setup_themes() {
     print_warning "⚙️ Step 6: Setting up Themes..."
     bash scripts/setup-themes.sh
@@ -61,7 +54,6 @@ setup_all() {
     setup_waybar
     setup_zsh
     setup_nautilus
-    setup_apps
     setup_themes
     setup_scripts
 }
@@ -70,14 +62,13 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Hyprland" "Waybar" "Zsh" "Nautilus" "Apps" "Themes" "Scripts" "All" "Quit")
+    options=("Hyprland" "Waybar" "Zsh" "Nautilus" "Themes" "Scripts" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Hyprland") setup_hyprland ;;
             "Waybar") setup_waybar ;;
             "Zsh") setup_zsh ;;
             "Nautilus") setup_nautilus ;;
-            "Apps") setup_apps ;;
             "Themes") setup_themes ;;
             "Scripts") setup_scripts ;;
             "All") setup_all; break ;;
@@ -93,12 +84,11 @@ show_help() {
     echo -e "\e[34mEloy Bermejo's Arch Hyprland Dotfiles Setup\e[0m"
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --all         Install all components (Hyprland, Waybar, Zsh, Nautilus, Apps, Themes, Scripts)"
+    echo "  --all         Install all components (Hyprland, Waybar, Zsh, Nautilus, Themes, Scripts)"
     echo "  --hyprland    Install Hyprland and keybindings"
     echo "  --waybar      Install Waybar with icons and visualizer"
     echo "  --zsh         Install Zsh and terminal emulator"
     echo "  --nautilus    Install Nautilus file manager"
-    echo "  --apps        Install browser, editor, and dev tools"
     echo "  --themes      Install wallpapers, music, and themes"
     echo "  --scripts     Install scripts to user config directory"
     echo "  --interactive Interactive mode with menu"
@@ -113,7 +103,6 @@ while [[ $# -gt 0 ]]; do
         --waybar) setup_waybar; shift ;;
         --zsh) setup_zsh; shift ;;
         --nautilus) setup_nautilus; shift ;;
-        --apps) setup_apps; shift ;;
         --themes) setup_themes; shift ;;
         --scripts) setup_scripts; shift ;;
         --interactive) interactive_mode; shift ;;
