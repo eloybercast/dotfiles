@@ -231,20 +231,15 @@ EOF
 install_nerd_fonts() {
     print_info "Installing Nerd Fonts for proper symbol rendering..."
     
-    tmp_dir=$(mktemp -d)
-    cd "$tmp_dir"
-    
-    wget -q "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip"
-    unzip -q FiraCode.zip -d firacode
-    
     mkdir -p ~/.local/share/fonts
     
-    cp -f firacode/*.ttf ~/.local/share/fonts/
+    print_info "Downloading Nerd Font files..."
     
+    curl -sL "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Regular/complete/Fira%20Code%20Regular%20Nerd%20Font%20Complete%20Mono.ttf" -o ~/.local/share/fonts/FiraCodeNerdFontMono-Regular.ttf
+    curl -sL "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/FiraCode/Bold/complete/Fira%20Code%20Bold%20Nerd%20Font%20Complete%20Mono.ttf" -o ~/.local/share/fonts/FiraCodeNerdFontMono-Bold.ttf
+    
+    print_info "Updating font cache..."
     fc-cache -f
-    
-    cd - > /dev/null
-    rm -rf "$tmp_dir"
     
     print_success "✅ Nerd Fonts installed for proper symbol rendering."
 }
