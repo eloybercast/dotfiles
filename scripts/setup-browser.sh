@@ -16,40 +16,21 @@ install_dependency git
 install_dependency base-devel
 install_dependency xdg-utils
 
-print_info "📦 Checking Brave browser installation..."
+print_info "📦 Checking Firefox browser installation..."
 
-if command -v brave &>/dev/null || command -v brave-browser &>/dev/null; then
-    print_info "Brave browser is already installed, skipping build."
+if command -v firefox &>/dev/null; then
+    print_info "Firefox is already installed, skipping installation."
 else
-    print_info "Brave not found, installing from AUR..."
-
-    if [[ -d brave-bin ]]; then
-        print_warning "Removing old brave-bin directory..."
-        rm -rf brave-bin
-    fi
-
-    git clone https://aur.archlinux.org/brave-bin.git
-    cd brave-bin
-    makepkg -si --noconfirm
-    cd ..
-    rm -rf brave-bin
-
-    print_success "✅ Brave installed."
+    print_info "Firefox not found, installing with pacman..."
+    sudo pacman -S --needed --noconfirm firefox
+    print_success "✅ Firefox installed."
 fi
 
-print_info "🌐 Setting Brave as the default browser..."
+print_info "🌐 Setting Firefox as the default browser..."
 
-BROWSER_BIN=""
-
-if command -v brave &>/dev/null; then
-    BROWSER_BIN="brave"
-elif command -v brave-browser &>/dev/null; then
-    BROWSER_BIN="brave-browser"
-fi
-
-if [[ -n "$BROWSER_BIN" ]]; then
-    xdg-settings set default-web-browser brave-browser.desktop
-    print_success "✅ Brave set as default browser."
+if command -v firefox &>/dev/null; then
+    xdg-settings set default-web-browser firefox.desktop
+    print_success "✅ Firefox set as default browser."
 else
-    print_error "❌ Could not find Brave binary to set default."
+    print_error "❌ Could not find Firefox binary to set default."
 fi
