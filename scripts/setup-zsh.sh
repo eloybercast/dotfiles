@@ -35,35 +35,38 @@ install_oh_my_posh() {
         return
     fi
 
-    if command -v yay &>/dev/null; then
-        print_info "Installing oh-my-posh-bin from AUR via yay..."
-        yay -S --noconfirm oh-my-posh-bin
-        print_success "oh-my-posh installed"
+    print_warning "Installing oh-my-posh..."
+    
+    local tmp_dir=$(mktemp -d)
+    cd "$tmp_dir"
+    
+    local ARCH="amd64"
+    if [[ $(uname -m) == "aarch64" ]]; then
+        ARCH="arm64"
+    fi
+    
+    print_info "Downloading oh-my-posh for Linux $ARCH..."
+    local DOWNLOAD_URL="https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$ARCH"
+    wget -q "$DOWNLOAD_URL" -O oh-my-posh
+    
+    if [ $? -ne 0 ]; then
+        print_error "Failed to download oh-my-posh"
+        cd - > /dev/null
+        rm -rf "$tmp_dir"
+        exit 1
+    fi
+    
+    chmod +x oh-my-posh
+    sudo mv oh-my-posh /usr/local/bin/
+    
+    cd - > /dev/null
+    rm -rf "$tmp_dir"
+    
+    if command -v oh-my-posh &>/dev/null; then
+        print_success "oh-my-posh installed successfully"
     else
-        print_warning "yay not found, installing oh-my-posh manually..."
-
-        ARCH="amd64"
-
-        LATEST_URL=$(curl -s https://api.github.com/repos/JanDeDobbeleer/oh-my-posh/releases/latest \
-            | grep "browser_download_url.*linux-$ARCH" \
-            | cut -d : -f 2,3 \
-            | tr -d \")
-
-        if [[ -z "$LATEST_URL" ]]; then
-            print_error "Failed to find oh-my-posh download URL"
-            exit 1
-        fi
-
-        wget -O oh-my-posh "$LATEST_URL"
-        chmod +x oh-my-posh
-        sudo mv oh-my-posh /usr/local/bin/oh-my-posh
-
-        if command -v oh-my-posh &>/dev/null; then
-            print_success "oh-my-posh installed successfully"
-        else
-            print_error "oh-my-posh installation failed"
-            exit 1
-        fi
+        print_error "oh-my-posh installation failed"
+        exit 1
     fi
 }
 
@@ -72,7 +75,7 @@ clone_plugin() {
     local target_dir=$2
     if [[ ! -d "$target_dir" ]]; then
         print_warning "Cloning plugin from $repo_url..."
-        git clone "$repo_url" "$target_dir"
+        git clone --depth=1 "$repo_url" "$target_dir"
         print_success "Cloned to $target_dir"
     else
         print_success "Plugin already present at $target_dir"
@@ -92,24 +95,103 @@ setup_theme() {
     local theme_dir="$HOME/.poshthemes"
     mkdir -p "$theme_dir"
 
-    print_info "Downloading hunk theme..."
-    oh-my-posh get themes/hunk > "$theme_dir/hunk.json"
+    print_info "Creating custom theme..."
+    
+    cat > "$theme_dir/eloy-theme.json" <<EOF
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "#2a9d8f",
+          "foreground": "#000000",
+          "leading_diamond": "\ue0b6",
+          "style": "diamond",
+          "template": " {{ .UserName }}@{{ .HostName }} ",
+          "trailing_diamond": "\ue0b0",
+          "type": "session"
+        },
+        {
+          "background": "#a8dadc",
+          "foreground": "#000000",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "style": "full"
+          },
+          "style": "powerline",
+          "template": " {{ .Path }} ",
+          "type": "path"
+        },
+        {
+          "background": "#cdb4db",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#f4a261{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#e63946{{ end }}",
+            "{{ if gt .Ahead 0 }}#2a9d8f{{ end }}",
+            "{{ if gt .Behind 0 }}#e9c46a{{ end }}"
+          ],
+          "foreground": "#000000",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "branch_icon": "\ue725 ",
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          },
+          "style": "powerline",
+          "template": " {{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "background": "#f1faee",
+          "foreground": "#000000",
+          "leading_diamond": "\ue0b2",
+          "style": "diamond",
+          "template": " {{ .CurrentDate | date .Format }} ",
+          "trailing_diamond": "\ue0b4",
+          "type": "time"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#e63946",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#e63946{{ else }}#2a9d8f{{ end }}"
+          ],
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "plain",
+          "template": "\u276f ",
+          "type": "exit"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 2
+}
+EOF
 
-    local pastel_theme="$theme_dir/hunk-pastel.json"
-    print_info "Applying pastel color palette..."
-
-    sed -e 's/#4e88eb/#a8dadc/g' \
-        -e 's/#e36262/#f4a261/g' \
-        -e 's/#d6d6d6/#f1faee/g' \
-        -e 's/#b8bb26/#cdb4db/g' \
-        -e 's/#ebdbb2/#ffe5d9/g' \
-        "$theme_dir/hunk.json" > "$pastel_theme"
-
-    echo "$pastel_theme"
+    echo "$theme_dir/eloy-theme.json"
 }
 
 write_zshrc() {
-    local pastel_theme_path=$1
+    local theme_path=$1
 
     if [[ -f "$HOME/.zshrc" ]]; then
         print_warning "Backing up existing .zshrc to .zshrc.bak"
@@ -127,7 +209,7 @@ source \$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh
 source \$ZSH_CUSTOM/z/z.sh
 
 # Initialize oh-my-posh with theme
-eval "\$(oh-my-posh init zsh --config $pastel_theme_path)"
+eval "\$(oh-my-posh init zsh --config $theme_path)"
 
 # Completion system
 autoload -U compinit && compinit
@@ -154,8 +236,8 @@ main() {
     install_package zsh
     install_oh_my_posh
     setup_plugins
-    pastel_theme_path=$(setup_theme)
-    write_zshrc "$pastel_theme_path"
+    theme_path=$(setup_theme)
+    write_zshrc "$theme_path"
 
     print_info "Changing your default shell to zsh..."
     if chsh -s "$(which zsh)"; then
