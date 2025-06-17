@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-source ./utils.sh
+source scripts/utils.sh
 
 require_dependency git base-devel xdg-settings
 
