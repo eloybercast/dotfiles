@@ -158,9 +158,14 @@ main() {
     pastel_theme_path=$(setup_theme)
     write_zshrc "$pastel_theme_path"
 
-    print_success "Setup complete! To start using zsh:"
-    echo "  chsh -s \$(which zsh)"
-    echo "Then restart your terminal or run:"
+    print_info "Changing your default shell to zsh..."
+    if chsh -s "$(which zsh)"; then
+        print_success "Default shell changed to zsh. Please log out and log back in."
+    else
+        print_warning "Could not change the default shell automatically. Please run 'chsh -s $(which zsh)' manually."
+    fi
+
+    print_success "Setup complete! To start using zsh now, run:"
     echo "  source ~/.zshrc"
 }
 
