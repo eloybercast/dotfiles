@@ -35,8 +35,14 @@ setup_zsh() {
     print_success "✅ Zsh setup complete"
 }
 
+setup_kitty() {
+    print_warning "⚙️ Step 4: Setting up Kitty terminal..."
+    bash scripts/setup-kitty.sh
+    print_success "✅ Kitty terminal setup complete"
+}
+
 setup_nautilus() {
-    print_warning "⚙️ Step 4: Setting up Nautilus..."
+    print_warning "⚙️ Step 5: Setting up Nautilus..."
     bash scripts/setup-nautilus.sh
     print_success "✅ Nautilus setup complete"
 }
@@ -65,6 +71,7 @@ setup_all() {
     setup_hyprland
     setup_waybar
     setup_zsh
+    setup_kitty
     setup_nautilus
     setup_themes
     setup_scripts
@@ -75,13 +82,14 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Browser" "Hyprland" "Waybar" "Zsh" "Nautilus" "Themes" "Scripts" "Config Files" "All" "Quit")
+    options=("Browser" "Hyprland" "Waybar" "Zsh" "Kitty" "Nautilus" "Themes" "Scripts" "Config Files" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Browser") setup_browser ;;
             "Hyprland") setup_hyprland ;;
             "Waybar") setup_waybar ;;
             "Zsh") setup_zsh ;;
+            "Kitty") setup_kitty ;;
             "Nautilus") setup_nautilus ;;
             "Themes") setup_themes ;;
             "Scripts") setup_scripts ;;
@@ -99,11 +107,12 @@ show_help() {
     echo -e "\e[34mEloy Bermejo's Arch Hyprland Dotfiles Setup\e[0m"
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --all         Install all components (Browser, Hyprland, Waybar, Zsh, Nautilus, Themes, Scripts)"
+    echo "  --all         Install all components (Browser, Hyprland, Waybar, Zsh, Kitty, Nautilus, Themes, Scripts)"
     echo "  --browser     Install Browser"
     echo "  --hyprland    Install Hyprland and keybindings"
     echo "  --waybar      Install Waybar with icons and visualizer"
     echo "  --zsh         Install Zsh and terminal emulator"
+    echo "  --kitty       Install Kitty terminal with zsh integration"
     echo "  --nautilus    Install Nautilus file manager"
     echo "  --themes      Install wallpapers, music, and themes"
     echo "  --scripts     Install scripts to user config directory"
@@ -120,6 +129,7 @@ while [[ $# -gt 0 ]]; do
         --hyprland) setup_hyprland; shift ;;
         --waybar) setup_waybar; shift ;;
         --zsh) setup_zsh; shift ;;
+        --kitty) setup_kitty; shift ;;
         --nautilus) setup_nautilus; shift ;;
         --themes) setup_themes; shift ;;
         --scripts) setup_scripts; shift ;;

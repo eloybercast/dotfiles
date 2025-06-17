@@ -81,6 +81,7 @@ clone_plugin() {
 
 setup_plugins() {
     local zsh_custom="$HOME/.zsh"
+    mkdir -p "$zsh_custom"
 
     clone_plugin https://github.com/zsh-users/zsh-syntax-highlighting.git "$zsh_custom/zsh-syntax-highlighting"
     clone_plugin https://github.com/zsh-users/zsh-autosuggestions.git "$zsh_custom/zsh-autosuggestions"
@@ -116,25 +117,28 @@ write_zshrc() {
     fi
 
     cat > "$HOME/.zshrc" <<EOF
-
+# ZSH Configuration for Eloy Bermejo's dotfiles
 
 ZSH_CUSTOM="\$HOME/.zsh"
 
+# Load plugins
 source \$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 source \$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh
-
 source \$ZSH_CUSTOM/z/z.sh
 
+# Initialize oh-my-posh with theme
 eval "\$(oh-my-posh init zsh --config $pastel_theme_path)"
 
+# Completion system
 autoload -U compinit && compinit
 setopt prompt_subst
 
+# Key bindings
 bindkey '^R' history-incremental-search-backward
 zstyle ':completion:*' menu select
 bindkey -v
 
+# Environment variables
 export EDITOR=nano
 EOF
 
@@ -155,16 +159,13 @@ main() {
 
     print_info "Changing your default shell to zsh..."
     if chsh -s "$(which zsh)"; then
-        print_success "Default shell changed to zsh. Please log out and log back in."
+        print_success "Default shell changed to zsh."
     else
         print_warning "Could not change the default shell automatically. Please run 'chsh -s $(which zsh)' manually."
     fi
 
-    print_info "Switching current shell session to zsh..."
-    exec "$(which zsh)" -l
-
-    print_success "Setup complete! To start using zsh now, run:"
-    echo "  source ~/.zshrc"
+    print_success "✅ Zsh setup complete! You will need to log out and log back in for the shell change to take effect."
+    print_info "Alternatively, you can start using zsh now by running: zsh"
 }
 
 main
