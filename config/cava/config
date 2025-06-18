@@ -1,0 +1,26 @@
+[general]
+bars = 12
+framerate = 60
+sensitivity = 100
+
+[output]
+method = raw
+raw_target = /dev/stdout
+data_format = ascii
+ascii_max_range = 7
+bar_delimiter = 59
+
+[smoothing]
+integral = 70
+monstercat = 1
+waves = 1
+
+[color]
+gradient = 1
+gradient_count = 6
+gradient_color_1 = '#a8dadc'
+gradient_color_2 = '#2a9d8f'
+gradient_color_3 = '#e9c46a'
+gradient_color_4 = '#f4a261'
+gradient_color_5 = '#e63946'
+gradient_color_6 = '#cdb4db' 

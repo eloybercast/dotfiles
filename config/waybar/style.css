@@ -1,0 +1,147 @@
+* {
+    font-family: "FiraCode Nerd Font", "Font Awesome 6 Free";
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: rgba(30, 30, 46, 0.8);
+    border-radius: 10px;
+    color: #cdd6f4;
+    margin: 5px;
+    transition-property: background-color;
+    transition-duration: .5s;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+#workspaces {
+    background-color: transparent;
+    border-radius: 10px;
+    margin: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#workspaces button {
+    background-color: #2a9d8f;
+    color: #f1faee;
+    border-radius: 10px;
+    margin: 0px 2px;
+    padding: 0px 5px;
+}
+
+#workspaces button.active {
+    background-color: #a8dadc;
+    color: #1d3557;
+}
+
+#workspaces button:hover {
+    background-color: #cdb4db;
+    color: #1d3557;
+    border-radius: 10px;
+}
+
+#workspaces button.urgent {
+    background-color: #e63946;
+    color: #f1faee;
+}
+
+#custom-media {
+    background-color: #a8dadc;
+    color: #1d3557;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 0px 10px;
+}
+
+#custom-cava {
+    background-color: #2a9d8f;
+    color: #f1faee;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 0px 10px;
+    font-family: monospace;
+}
+
+#clock {
+    background-color: #cdb4db;
+    color: #1d3557;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 0px 10px;
+}
+
+#cpu {
+    background-color: #2a9d8f;
+    color: #f1faee;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 0px 10px;
+}
+
+#memory {
+    background-color: #a8dadc;
+    color: #1d3557;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 0px 10px;
+}
+
+#network {
+    background-color: #cdb4db;
+    color: #1d3557;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 0px 10px;
+}
+
+#network.disconnected {
+    background-color: #e63946;
+    color: #f1faee;
+}
+
+#bluetooth {
+    background-color: #a8dadc;
+    color: #1d3557;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 0px 10px;
+}
+
+#pulseaudio {
+    background-color: #2a9d8f;
+    color: #f1faee;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 0px 10px;
+}
+
+#pulseaudio.muted {
+    background-color: #e63946;
+    color: #f1faee;
+}
+
+#pulseaudio.microphone {
+    background-color: #cdb4db;
+    color: #1d3557;
+}
+
+#keyboard-state {
+    background-color: #a8dadc;
+    color: #1d3557;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 0px 10px;
+}
+
+#custom-power {
+    background-color: #e63946;
+    color: #f1faee;
+    border-radius: 10px;
+    margin: 5px;
+    margin-right: 5px;
+    padding: 0px 10px;
+} 
