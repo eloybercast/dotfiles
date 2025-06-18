@@ -1,16 +1,14 @@
 {
     "layer": "top",
     "position": "top",
-    "height": 30,
+    "height": 24,
     "spacing": 4,
-    "margin-top": 6,
-    "margin-left": 10,
-    "margin-right": 10,
+    "margin-top": 2,
+    "margin-left": 8,
+    "margin-right": 8,
 
     "modules-left": [
-        "hyprland/workspaces",
-        "custom/media",
-        "custom/cava"
+        "hyprland/workspaces"
     ],
     
     "modules-center": [
@@ -19,12 +17,10 @@
     
     "modules-right": [
         "pulseaudio",
-        "pulseaudio#microphone",
-        "bluetooth",
         "network",
+        "bluetooth",
         "cpu",
         "memory",
-        "keyboard-state",
         "custom/power"
     ],
 
@@ -44,41 +40,11 @@
         "sort-by-number": true
     },
 
-    "custom/cava": {
-        "exec": "cava -p ~/.config/cava/config | sed -u 's/;/\\n/g' | tail -n 1",
-        "format": "{}",
-        "tooltip": false,
-        "on-click": "pavucontrol",
-        "restart-interval": 1
-    },
-
-    "custom/media": {
-        "format": "{icon} {}",
-        "return-type": "json",
-        "format-icons": {
-            "Playing": "",
-            "Paused": ""
-        },
-        "max-length": 40,
-        "exec": "playerctl -a metadata --format '{\"text\": \"{{artist}} - {{title}}\", \"tooltip\": \"{{playerName}}: {{artist}} - {{title}}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F",
-        "on-click": "playerctl play-pause"
-    },
-
-    "keyboard-state": {
-        "numlock": true,
-        "capslock": true,
-        "format": "{name} {icon}",
-        "format-icons": {
-            "locked": "",
-            "unlocked": ""
-        }
-    },
-
     "clock": {
         "timezone": "Europe/Madrid",
         "tooltip-format": "<big>{:%Y %B}</big>\\n<tt><small>{calendar}</small></tt>",
-        "format": "{:%a, %d %b}",
-        "format-alt": "{:%H:%M}"
+        "format": "{:%H:%M}",
+        "format-alt": "{:%a, %d %b}"
     },
 
     "cpu": {
@@ -93,19 +59,19 @@
     },
 
     "network": {
-        "format-wifi": " {essid}",
-        "format-ethernet": " {ipaddr}",
-        "tooltip-format": " {ifname} via {gwaddr}",
+        "format-wifi": " ",
+        "format-ethernet": " ",
+        "tooltip-format": " {essid} ({signalStrength}%)",
         "format-linked": " {ifname} (No IP)",
-        "format-disconnected": "⚠ Disconnected",
+        "format-disconnected": "⚠ ",
         "format-alt": "{ifname}: {ipaddr}/{cidr}",
         "on-click": "nm-connection-editor"
     },
 
     "bluetooth": {
-        "format": " {status}",
-        "format-connected": " {device_alias}",
-        "format-connected-battery": " {device_alias} {device_battery_percentage}%",
+        "format": " ",
+        "format-connected": " ",
+        "format-connected-battery": " {device_battery_percentage}%",
         "tooltip-format": "{controller_alias}\\t{controller_address}\\n\\n{num_connections} connected",
         "tooltip-format-connected": "{controller_alias}\\t{controller_address}\\n\\n{num_connections} connected\\n\\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}\\t{device_address}",
@@ -114,12 +80,10 @@
     },
 
     "pulseaudio": {
-        "format": "{icon} {volume}%",
-        "format-bluetooth": "{icon} {volume}% {format_source}",
-        "format-bluetooth-muted": " {icon} {format_source}",
-        "format-muted": " {format_source}",
-        "format-source": "{volume}% ",
-        "format-source-muted": "",
+        "format": "{icon}",
+        "format-bluetooth": "{icon}",
+        "format-bluetooth-muted": " ",
+        "format-muted": " ",
         "format-icons": {
             "headphone": "",
             "hands-free": "",
@@ -130,16 +94,6 @@
             "default": ["", "", ""]
         },
         "on-click": "pavucontrol"
-    },
-
-    "pulseaudio#microphone": {
-        "format": "{format_source}",
-        "format-source": " {volume}%",
-        "format-source-muted": " Muted",
-        "on-click": "pamixer --default-source -t",
-        "on-scroll-up": "pamixer --default-source -i 5",
-        "on-scroll-down": "pamixer --default-source -d 5",
-        "scroll-step": 5
     },
 
     "custom/power": {
