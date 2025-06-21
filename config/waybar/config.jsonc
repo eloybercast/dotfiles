@@ -4,8 +4,8 @@
     "height": 24,
     "spacing": 4,
     "margin-top": 10,
-    "margin-left": 10,
-    "margin-right": 10,
+    "margin-left": 15,
+    "margin-right": 15,
 
     "modules-left": [
         "hyprland/workspaces",
@@ -34,9 +34,9 @@
             "3": "•",
             "4": "•",
             "5": "•",
-            "urgent": "",
+            "urgent": "•",
             "active": "",
-            "default": ""
+            "default": "•"
         },
         "persistent-workspaces": {
             "1": [],
@@ -56,13 +56,13 @@
     },
 
     "cpu": {
-        "format": " {usage}%",
+        "format": "󰻠 {usage}%",
         "tooltip": true,
         "interval": 2
     },
 
     "memory": {
-        "format": " {}%",
+        "format": "󰍛 {used:0.1f}GB",
         "interval": 2
     },
 

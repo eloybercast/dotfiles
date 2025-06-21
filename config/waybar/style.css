@@ -34,7 +34,7 @@ window#waybar.hidden {
 }
 
 #workspaces button.active {
-    color: #ffffff;
+    color: #FF8C63;
     border: none;
     box-shadow: none;
     text-shadow: none;
@@ -69,15 +69,31 @@ window#waybar.hidden {
 }
 
 #cpu {
-    color: #a0a0a0;
+    color: #4ec2f7;
     margin: 2px;
     padding: 0px 6px;
 }
 
+#cpu:hover {
+    background: none;
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
+    outline: none;
+}
+
 #memory {
-    color: #a0a0a0;
+    color: #9ece6a;
     margin: 2px;
     padding: 0px 6px;
+}
+
+#memory:hover {
+    background: none;
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
+    outline: none;
 }
 
 #network {
