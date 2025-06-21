@@ -20,15 +20,13 @@
     ],
     
     "modules-right": [
-        "pulseaudio",
-        "custom/separator",
-        "pulseaudio#microphone",
-        "custom/separator",
-        "backlight",
         "custom/separator",
         "network",
         "custom/separator",
         "bluetooth",
+        "custom/separator",
+        "pulseaudio",
+        "pulseaudio#microphone",
         "custom/separator",
         "custom/power"
     ],
@@ -114,10 +112,10 @@
     },
 
     "pulseaudio": {
-        "format": "{icon}",
-        "format-bluetooth": "󰂱",
-        "format-bluetooth-muted": "󰂲",
-        "format-muted": "󰝟",
+        "format": "{icon} {volume}%",
+        "format-bluetooth": "󰂱 {volume}%",
+        "format-bluetooth-muted": "󰂲 0%",
+        "format-muted": "󰝟 0%",
         "format-icons": {
             "headphone": "󰋋",
             "hands-free": "󰋎",
@@ -130,17 +128,21 @@
         "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
         "on-scroll-up": "pactl set-sink-volume @DEFAULT_SINK@ +5%",
         "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
-        "tooltip-format": "Volume: {volume}%"
+        "scroll-step": 5,
+        "tooltip-format": "Volume: {volume}%",
+        "max-volume": 150
     },
 
     "pulseaudio#microphone": {
         "format": "{format_source}",
-        "format-source": "󰍬",
-        "format-source-muted": "󰍭",
+        "format-source": "󰍬 {source_volume}%",
+        "format-source-muted": "󰍭 0%",
         "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle",
         "on-scroll-up": "pactl set-source-volume @DEFAULT_SOURCE@ +5%",
         "on-scroll-down": "pactl set-source-volume @DEFAULT_SOURCE@ -5%",
-        "tooltip-format": "Microphone volume: {source_volume}%"
+        "scroll-step": 5,
+        "tooltip-format": "Microphone volume: {source_volume}%",
+        "max-volume": 100
     },
 
     "backlight": {

@@ -13,7 +13,8 @@ sudo pacman -S --needed --noconfirm waybar \
     bluez bluez-utils blueman \
     playerctl cava \
     wofi ttf-firacode-nerd \
-    libnotify
+    libnotify \
+    pulseaudio-utils
 
 print_info "Enabling and starting system services..."
 sudo systemctl enable --now NetworkManager.service
@@ -57,4 +58,26 @@ if pgrep -x "waybar" > /dev/null; then
     print_info "Restarted Waybar with new configuration."
 fi
 
-print_success "✅ Waybar setup complete with modern design, custom menus, and pastel theme."
+# Set up default volume limits
+print_info "Setting default volume limits..."
+if [ -f ~/.config/pulse/daemon.conf ]; then
+    # Backup existing config
+    cp ~/.config/pulse/daemon.conf ~/.config/pulse/daemon.conf.bak
+    # Update or add max volume setting
+    if grep -q "max-volume =" ~/.config/pulse/daemon.conf; then
+        sed -i 's/max-volume =.*/max-volume = 150/' ~/.config/pulse/daemon.conf
+    else
+        echo "max-volume = 150" >> ~/.config/pulse/daemon.conf
+    fi
+else
+    # Create config directory and file if they don't exist
+    mkdir -p ~/.config/pulse
+    echo "max-volume = 150" > ~/.config/pulse/daemon.conf
+fi
+
+print_info "Reloading PulseAudio to apply volume settings..."
+pulseaudio -k || true  # Kill PulseAudio if it's running
+sleep 1
+pulseaudio --start     # Restart PulseAudio
+
+print_success "✅ Waybar setup complete with modern design, custom menus, and volume controls."
