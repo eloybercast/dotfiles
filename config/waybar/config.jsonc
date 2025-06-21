@@ -4,8 +4,8 @@
     "height": 28,
     "spacing": 6,
     "margin-top": 8,
-    "margin-left": 12,
-    "margin-right": 12,
+    "margin-left": 15,
+    "margin-right": 15,
 
     "modules-left": [
         "hyprland/workspaces",
@@ -37,14 +37,14 @@
         "format": "{icon}",
         "on-click": "activate",
         "format-icons": {
-            "1": "󰎤",
-            "2": "󰎧",
-            "3": "󰎪",
-            "4": "󰎭",
-            "5": "󰎱",
-            "urgent": "󰀨",
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": "",
+            "5": "",
+            "urgent": "",
             "active": "",
-            "default": "󰊠"
+            "default": ""
         },
         "persistent-workspaces": {
             "1": [],
@@ -127,16 +127,20 @@
             "car": "󰄋",
             "default": ["󰕿", "󰖀", "󰕾"]
         },
-        "tooltip-format": "Volume: {volume}%",
-        "on-click": "pavucontrol"
+        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+        "on-scroll-up": "pactl set-sink-volume @DEFAULT_SINK@ +5%",
+        "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
+        "tooltip-format": "Volume: {volume}%"
     },
 
     "pulseaudio#microphone": {
         "format": "{format_source}",
         "format-source": "󰍬",
         "format-source-muted": "󰍭",
-        "tooltip-format": "Microphone volume: {source_volume}%",
-        "on-click": "pavucontrol -t 4"
+        "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle",
+        "on-scroll-up": "pactl set-source-volume @DEFAULT_SOURCE@ +5%",
+        "on-scroll-down": "pactl set-source-volume @DEFAULT_SOURCE@ -5%",
+        "tooltip-format": "Microphone volume: {source_volume}%"
     },
 
     "backlight": {
