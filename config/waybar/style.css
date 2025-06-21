@@ -5,12 +5,10 @@
 }
 
 window#waybar {
-    background: rgba(21, 22, 30, 0.85);
-    border-radius: 6px;
-    color: #cdd6f4;
-    margin: 2px;
-    transition-property: background-color;
-    transition-duration: .5s;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    color: #bababa;
+    margin: 5px;
 }
 
 window#waybar.hidden {
