@@ -21,6 +21,10 @@ window#waybar.hidden {
 
 #workspaces button:hover {
     background: none;
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
+    outline: none;
 }
 
 #workspaces button.active {

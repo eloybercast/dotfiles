@@ -30,6 +30,12 @@ require_dependency() {
 }
 
 install_oh_my_posh() {
+    # Check if oh-my-posh is already installed
+    if [ -x "$HOME/.local/bin/oh-my-posh" ]; then
+        print_success "oh-my-posh is already installed"
+        return
+    fi
+    
     print_info "Installing Oh My Posh..."
     
     mkdir -p "$HOME/.local/bin"
@@ -250,18 +256,29 @@ main() {
 
     require_dependency git curl sed wget
 
-    install_package zsh
+    # Check if zsh is already installed
+    if command -v zsh &>/dev/null; then
+        print_success "zsh is already installed"
+    else
+        install_package zsh
+    fi
+    
     install_oh_my_posh
     setup_plugins
     theme_path=$(setup_theme)
     write_zshrc "$theme_path"
     install_nerd_fonts
 
-    print_info "Changing your default shell to zsh..."
-    if chsh -s "$(which zsh)"; then
-        print_success "Default shell changed to zsh."
+    print_info "Checking if zsh is already the default shell..."
+    if [ "$SHELL" = "$(which zsh)" ]; then
+        print_success "zsh is already the default shell"
     else
-        print_warning "Could not change the default shell automatically. Please run 'chsh -s $(which zsh)' manually."
+        print_info "Changing your default shell to zsh..."
+        if chsh -s "$(which zsh)"; then
+            print_success "Default shell changed to zsh."
+        else
+            print_warning "Could not change the default shell automatically. Please run 'chsh -s $(which zsh)' manually."
+        fi
     fi
 
     print_success "✅ Zsh setup complete! You will need to log out and log back in for the shell change to take effect."
