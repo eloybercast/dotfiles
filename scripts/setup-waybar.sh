@@ -12,7 +12,7 @@ sudo pacman -S --needed --noconfirm waybar \
     networkmanager network-manager-applet nm-connection-editor \
     bluez bluez-utils blueman \
     playerctl cava \
-    wofi
+    wofi ttf-firacode-nerd
 
 print_info "Enabling and starting system services..."
 sudo systemctl enable --now NetworkManager.service
@@ -32,8 +32,11 @@ if [ -f "config/waybar/config.jsonc" ]; then
 fi
 
 mkdir -p ~/.config/waybar
+mkdir -p ~/.config/scripts/general
 
 cp -rf config/waybar/* ~/.config/waybar/
+cp -rf config/scripts/general/powermenu.sh ~/.config/scripts/general/
+chmod +x ~/.config/scripts/general/powermenu.sh
 print_info "Copied Waybar configuration to user config directory."
 
 print_info "Adding Waybar autostart to Hyprland config..."
@@ -43,4 +46,10 @@ if [ -f "config/hyprland/user.conf" ]; then
     fi
 fi
 
-print_success "✅ Waybar setup complete with audio, networking, bluetooth, and power menu."
+if pgrep -x "waybar" > /dev/null; then
+    killall waybar
+    waybar &
+    print_info "Restarted Waybar with new configuration."
+fi
+
+print_success "✅ Waybar setup complete with modern design, icons, and full functionality."

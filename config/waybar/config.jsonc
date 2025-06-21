@@ -1,15 +1,17 @@
 {
     "layer": "top",
     "position": "top",
-    "height": 24,
-    "spacing": 4,
-    "margin-top": 10,
-    "margin-left": 15,
-    "margin-right": 15,
+    "height": 28,
+    "spacing": 6,
+    "margin-top": 8,
+    "margin-left": 12,
+    "margin-right": 12,
 
     "modules-left": [
         "hyprland/workspaces",
+        "custom/separator",
         "cpu",
+        "custom/separator",
         "memory"
     ],
     
@@ -19,10 +21,15 @@
     
     "modules-right": [
         "pulseaudio",
+        "custom/separator",
         "pulseaudio#microphone",
+        "custom/separator",
         "backlight",
+        "custom/separator",
         "network",
+        "custom/separator",
         "bluetooth",
+        "custom/separator",
         "custom/power"
     ],
 
@@ -30,14 +37,14 @@
         "format": "{icon}",
         "on-click": "activate",
         "format-icons": {
-            "1": "•",
-            "2": "•",
-            "3": "•",
-            "4": "•",
-            "5": "•",
-            "urgent": "•",
-            "active": "",
-            "default": "•"
+            "1": "󰎤",
+            "2": "󰎧",
+            "3": "󰎪",
+            "4": "󰎭",
+            "5": "󰎱",
+            "urgent": "󰀨",
+            "active": "",
+            "default": "󰊠"
         },
         "persistent-workspaces": {
             "1": [],
@@ -51,77 +58,84 @@
 
     "clock": {
         "timezone": "Europe/Madrid",
-        "tooltip-format": "<big>{:%Y %B}</big>\\n<tt><small>{calendar}</small></tt>",
-        "format": "{:%d %b %H:%M}",
-        "format-alt": "{:%a, %d %b %Y}"
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format": "󰅐 {:%H:%M}",
+        "format-alt": "󰃭 {:%a, %d %b %Y}"
     },
 
     "cpu": {
-        "format": "󰍛  {usage}%",
-        "tooltip": false,
+        "format": "󰻠 {usage}%",
+        "tooltip": true,
         "interval": 2
     },
 
     "memory": {
-        "format": "   {used:0.1f}G",
+        "format": "󰍛 {used:0.1f}GB",
+        "tooltip-format": "{used:0.1f}GB / {total:0.1f}GB used",
         "interval": 2
     },
 
     "network": {
-        "format-wifi": " {essid}",
-        "format-ethernet": " {ipaddr}",
-        "tooltip-format": " {essid} ({signalStrength}%)",
-        "format-linked": " {ifname} (No IP)",
-        "format-disconnected": "⚠ Disconnected",
-        "format-alt": "{ifname}: {ipaddr}/{cidr}",
+        "format-wifi": "󰤨 {essid}",
+        "format-ethernet": "󰈀 {ipaddr}",
+        "tooltip-format": "󱘖 {ifname}\n󰩟 {ipaddr}/{cidr}\n󰤢 {signalStrength}%",
+        "format-linked": "󱘖 {ifname} (No IP)",
+        "format-disconnected": "󰤭 Disconnected",
+        "format-alt": "󱘖 {ifname}: {ipaddr}/{cidr}",
         "on-click": "nm-connection-editor"
     },
 
     "bluetooth": {
-        "format": " ",
-        "format-connected": " {num_connections}",
-        "format-connected-battery": " {device_battery_percentage}%",
-        "tooltip-format": "{controller_alias}\\t{controller_address}\\n\\n{num_connections} connected",
-        "tooltip-format-connected": "{controller_alias}\\t{controller_address}\\n\\n{num_connections} connected\\n\\n{device_enumerate}",
-        "tooltip-format-enumerate-connected": "{device_alias}\\t{device_address}",
-        "tooltip-format-enumerate-connected-battery": "{device_alias}\\t{device_address}\\t{device_battery_percentage}%",
+        "format": "󰂯",
+        "format-connected": "󰂱 {num_connections}",
+        "format-connected-battery": "󰂱 {device_battery_percentage}%",
+        "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
         "on-click": "blueman-manager"
     },
 
     "pulseaudio": {
         "format": "{icon} {volume}%",
-        "format-bluetooth": "{icon} {volume}%",
-        "format-bluetooth-muted": " ",
-        "format-muted": " ",
+        "format-bluetooth": "󰂱 {volume}%",
+        "format-bluetooth-muted": "󰂲 ",
+        "format-muted": "󰝟 ",
         "format-icons": {
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": "",
-            "default": ["", "", ""]
+            "headphone": "󰋋",
+            "hands-free": "󰋎",
+            "headset": "󰋎",
+            "phone": "󰏲",
+            "portable": "󰏲",
+            "car": "󰄋",
+            "default": ["󰕿", "󰖀", "󰕾"]
         },
         "on-click": "pavucontrol"
     },
 
     "pulseaudio#microphone": {
         "format": "{format_source}",
-        "format-source": " {volume}%",
-        "format-source-muted": " ",
+        "format-source": "󰍬 {volume}%",
+        "format-source-muted": "󰍭 ",
         "on-click": "pavucontrol -t 4",
         "tooltip": false
     },
 
     "backlight": {
         "format": "{icon} {percent}%",
-        "format-icons": ["", "", "", "", "", "", "", "", ""],
+        "format-icons": ["󰃞", "󰃟", "󰃠"],
         "on-scroll-up": "brightnessctl set +5%",
         "on-scroll-down": "brightnessctl set 5%-"
     },
 
+    "custom/separator": {
+        "format": "|",
+        "interval": "once",
+        "tooltip": false
+    },
+
     "custom/power": {
-        "format": "",
+        "format": "󰐥",
         "on-click": "~/.config/scripts/general/powermenu.sh",
         "tooltip": false
     }

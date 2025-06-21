@@ -1,14 +1,16 @@
 * {
     font-family: "FiraCode Nerd Font", "Font Awesome 6 Free";
-    font-size: 12px;
+    font-size: 13px;
     min-height: 0;
 }
 
 window#waybar {
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    color: #bababa;
+    background: rgba(30, 30, 46, 0.8);
+    border-radius: 10px;
+    color: #cdd6f4;
     margin: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
 window#waybar.hidden {
@@ -16,32 +18,30 @@ window#waybar.hidden {
 }
 
 #workspaces button {
-    padding: 5px;
+    padding: 0 6px;
+    margin: 4px 2px;
+    border-radius: 6px;
+    background-color: transparent;
+    color: #cdd6f4;
+    transition: all 0.3s ease;
     border: none;
-    box-shadow: none;
-    text-shadow: none;
-    outline: none;
 }
 
 #workspaces button:hover {
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.1);
     box-shadow: none;
     text-shadow: none;
-    outline: none;
-    color: inherit;
-    transition: none;
+    border: none;
 }
 
 #workspaces button.active {
+    background-color: rgba(255, 140, 99, 0.2);
     color: #FF8C63;
     border: none;
-    box-shadow: none;
-    text-shadow: none;
-    outline: none;
 }
 
 #workspaces button.urgent {
+    background-color: rgba(230, 57, 70, 0.2);
     color: #e63946;
 }
 
@@ -49,113 +49,124 @@ window#waybar.hidden {
     background-color: #a8dadc;
     color: #1d3557;
     border-radius: 10px;
-    margin: 5px;
-    padding: 0px 10px;
+    margin: 4px;
+    padding: 0 10px;
 }
 
 #custom-cava {
     background-color: #2a9d8f;
     color: #f1faee;
     border-radius: 10px;
-    margin: 5px;
-    padding: 0px 10px;
+    margin: 4px;
+    padding: 0 10px;
     font-family: monospace;
 }
 
 #clock {
-    margin: 2px;
-    padding: 0px 10px;
-}
-
-#clock:hover {
-    background: none;
-    border: none;
-    box-shadow: none;
-    text-shadow: none;
-    outline: none;
+    margin: 2px 8px;
+    padding: 0 10px;
+    border-radius: 8px;
+    background-color: rgba(137, 180, 250, 0.1);
+    color: #89b4fa;
+    font-weight: bold;
 }
 
 #cpu {
     color: #4ec2f7;
-    margin: 2px;
-    padding: 0px 6px;
-}
-
-#cpu:hover {
-    background: none;
-    border: none;
-    box-shadow: none;
-    text-shadow: none;
-    outline: none;
+    margin: 4px 2px;
+    padding: 0 8px;
+    border-radius: 8px;
+    background-color: rgba(78, 194, 247, 0.1);
 }
 
 #memory {
     color: #9ece6a;
-    margin: 2px;
-    padding: 0px 6px;
-}
-
-#memory:hover {
-    background: none;
-    border: none;
-    box-shadow: none;
-    text-shadow: none;
-    outline: none;
+    margin: 4px 2px;
+    padding: 0 8px;
+    border-radius: 8px;
+    background-color: rgba(158, 206, 106, 0.1);
 }
 
 #network {
-    color: #a0a0a0;
-    margin: 2px;
-    padding: 0px 6px;
+    color: #f5c2e7;
+    margin: 4px 2px;
+    padding: 0 8px;
+    border-radius: 8px;
+    background-color: rgba(245, 194, 231, 0.1);
 }
 
 #network.disconnected {
     color: #e63946;
+    background-color: rgba(230, 57, 70, 0.1);
 }
 
 #bluetooth {
-    color: #a0a0a0;
-    margin: 2px;
-    padding: 0px 6px;
+    color: #89b4fa;
+    margin: 4px 2px;
+    padding: 0 8px;
+    border-radius: 8px;
+    background-color: rgba(137, 180, 250, 0.1);
 }
 
 #pulseaudio {
-    color: #a0a0a0;
-    margin: 2px;
-    padding: 0px 6px;
+    color: #fab387;
+    margin: 4px 2px;
+    padding: 0 8px;
+    border-radius: 8px;
+    background-color: rgba(250, 179, 135, 0.1);
 }
 
 #pulseaudio.muted {
     color: #e63946;
+    background-color: rgba(230, 57, 70, 0.1);
 }
 
 #pulseaudio.microphone {
-    color: #cdb4db;
-    margin: 2px;
-    padding: 0px 6px;
+    color: #cba6f7;
+    margin: 4px 2px;
+    padding: 0 8px;
+    border-radius: 8px;
+    background-color: rgba(203, 166, 247, 0.1);
 }
 
 #pulseaudio.microphone.source-muted {
     color: #e63946;
+    background-color: rgba(230, 57, 70, 0.1);
 }
 
 #backlight {
-    color: #ffb347;
-    margin: 2px;
-    padding: 0px 6px;
+    color: #f9e2af;
+    margin: 4px 2px;
+    padding: 0 8px;
+    border-radius: 8px;
+    background-color: rgba(249, 226, 175, 0.1);
 }
 
 #keyboard-state {
     background-color: #a8dadc;
     color: #1d3557;
     border-radius: 10px;
-    margin: 5px;
-    padding: 0px 10px;
+    margin: 4px;
+    padding: 0 10px;
+}
+
+#custom-separator {
+    color: #6c7086;
+    margin: 0;
+    padding: 0 1px;
+    font-size: 18px;
+    opacity: 0.6;
 }
 
 #custom-power {
-    color: #e63946;
-    margin: 2px;
-    margin-right: 6px;
-    padding: 0px 6px;
+    color: #f38ba8;
+    margin: 4px 6px 4px 2px;
+    padding: 0 8px;
+    border-radius: 8px;
+    background-color: rgba(243, 139, 168, 0.1);
+    font-size: 15px;
+}
+
+#custom-power:hover {
+    background-color: rgba(243, 139, 168, 0.2);
 } 
