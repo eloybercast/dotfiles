@@ -12,8 +12,7 @@ sudo pacman -S --needed --noconfirm waybar \
     networkmanager network-manager-applet nm-connection-editor \
     bluez bluez-utils blueman \
     playerctl cava \
-    wofi ttf-firacode-nerd \
-    libnotify
+    wofi ttf-firacode-nerd
 
 print_info "Enabling and starting system services..."
 sudo systemctl enable --now NetworkManager.service
@@ -70,4 +69,4 @@ if pgrep -x "waybar" > /dev/null; then
     print_info "Restarted Waybar with new configuration."
 fi
 
-print_success "✅ Waybar setup complete with all scripts properly organized."
+print_success "✅ Waybar setup complete with simplified volume controls."

@@ -14,10 +14,4 @@ fi
 
 pamixer --set-volume $target_volume
 
-if command -v notify-send &> /dev/null; then
-    notify-send -t 1000 -r 1000 "Volume: ${target_volume}%" \
-    -h string:x-canonical-private-synchronous:volume \
-    -h int:value:$target_volume
-fi
-
 exit 0 

@@ -173,7 +173,7 @@ window#waybar.hidden {
     background-color: rgba(243, 139, 168, 0.2);
 }
 
-#pulseaudio.microphone {
+#pulseaudio.mic {
     color: #cba6f7;
     margin: 5px 2px;
     padding: 0 10px;
@@ -182,7 +182,7 @@ window#waybar.hidden {
     background-color: rgba(203, 166, 247, 0.2);
 }
 
-#pulseaudio.microphone.source-muted {
+#pulseaudio.mic.source-muted {
     color: #f38ba8;
     background-color: rgba(243, 139, 168, 0.2);
 }
