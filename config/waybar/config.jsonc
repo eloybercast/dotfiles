@@ -158,7 +158,7 @@
 
     "custom/power": {
         "format": "󰐥",
-        "on-click": "~/.config/scripts/general/powermenu.sh",
+        "on-click": "~/.config/scripts/waybar/powermenu.sh",
         "tooltip": false
     }
 } 
