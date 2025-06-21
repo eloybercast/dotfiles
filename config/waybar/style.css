@@ -15,16 +15,8 @@ window#waybar.hidden {
     opacity: 0.2;
 }
 
-#workspaces {
-    background-color: red;
-    border-radius: 6px;
-    margin: 2px;
-    margin-left: 4px;
-}
-
 #workspaces button {
-    color: #a0a0a0;
-    border-radius: 6px;
+    border-radius: 8px;
     margin: 0px 2px;
     padding: 0px 5px;
     background-color: transparent;
@@ -33,7 +25,6 @@ window#waybar.hidden {
 }
 
 #workspaces button:hover {
-    background-color: rgba(80, 100, 140, 0.2);
     color: #ffffff;
 }
 
