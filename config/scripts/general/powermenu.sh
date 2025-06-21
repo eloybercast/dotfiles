@@ -2,16 +2,17 @@
 
 ~/.config/scripts/general/blur-hyprland.sh on
 
-option=$(printf "󰍃 Logout\n⭮ Reboot\n⏻ Shutdown" | wofi \
+option=$(printf "⭮ Reboot\n󰍃 Logout\n⏻ Shutdown" | wofi \
     --dmenu \
     --insensitive \
-    --width 300 \
-    --height 180 \
+    --width 100% \
+    --height 100% \
     --location center \
     --style ~/.config/wofi/power.css \
     --hide-scroll \
     --cache-file /dev/null \
-    --prompt "Power Menu" \
+    --prompt " " \
+    --no-actions \
     --columns 3)
 
 ~/.config/scripts/general/blur-hyprland.sh off
