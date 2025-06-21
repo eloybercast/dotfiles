@@ -26,7 +26,7 @@
         "bluetooth",
         "custom/separator",
         "pulseaudio",
-        "pulseaudio#microphone",
+        "custom/mic",
         "custom/separator",
         "custom/power"
     ],
@@ -98,7 +98,7 @@
         "tooltip-format-wifi": "Connected to {essid}\nSignal strength: {signalStrength}%\nIP: {ipaddr}/{cidr}",
         "tooltip-format-ethernet": "Ethernet connection\nIP: {ipaddr}/{cidr}",
         "tooltip-format-disconnected": "Disconnected",
-        "on-click": "~/.config/scripts/general/nm-menu.sh"
+        "on-click": "~/.config/scripts/waybar/nm-menu.sh"
     },
 
     "bluetooth": {
@@ -125,24 +125,20 @@
             "car": "󰄋",
             "default": ["󰕿", "󰖀", "󰕾"]
         },
-        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
-        "on-scroll-up": "pactl set-sink-volume @DEFAULT_SINK@ +5%",
-        "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
-        "scroll-step": 5,
-        "tooltip-format": "Volume: {volume}%",
-        "max-volume": 150
+        "on-click": "~/.config/scripts/waybar/volume-toggle.sh",
+        "on-scroll-up": "~/.config/scripts/waybar/volume-up.sh",
+        "on-scroll-down": "~/.config/scripts/waybar/volume-down.sh",
+        "tooltip-format": "Volume: {volume}%"
     },
 
-    "pulseaudio#microphone": {
-        "format": "{format_source}",
-        "format-source": "󰍬 {source_volume}%",
-        "format-source-muted": "󰍭 0%",
-        "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle",
-        "on-scroll-up": "pactl set-source-volume @DEFAULT_SOURCE@ +5%",
-        "on-scroll-down": "pactl set-source-volume @DEFAULT_SOURCE@ -5%",
-        "scroll-step": 5,
-        "tooltip-format": "Microphone volume: {source_volume}%",
-        "max-volume": 100
+    "custom/mic": {
+        "exec": "~/.config/scripts/waybar/mic-status.sh",
+        "on-click": "~/.config/scripts/waybar/mic-toggle.sh",
+        "on-scroll-up": "~/.config/scripts/waybar/mic-up.sh",
+        "on-scroll-down": "~/.config/scripts/waybar/mic-down.sh",
+        "interval": 1,
+        "format": "{}",
+        "tooltip": true
     },
 
     "backlight": {
@@ -161,7 +157,7 @@
 
     "custom/power": {
         "format": "󰐥",
-        "on-click": "~/.config/scripts/general/powermenu.sh",
+        "on-click": "~/.config/scripts/waybar/powermenu.sh",
         "tooltip": false
     }
 } 

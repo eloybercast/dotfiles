@@ -7,24 +7,28 @@ print_info "📊 Setting up Waybar..."
 
 print_info "Installing Waybar and dependencies..."
 sudo pacman -S --needed --noconfirm waybar \
-    pamixer pulseaudio-alsa pavucontrol \
+    pamixer pulseaudio-alsa pavucontrol alsa-utils \
     brightnessctl \
     networkmanager network-manager-applet nm-connection-editor \
     bluez bluez-utils blueman \
     playerctl cava \
     wofi ttf-firacode-nerd \
-    libnotify \
-    pulseaudio-utils
+    libnotify
 
 print_info "Enabling and starting system services..."
 sudo systemctl enable --now NetworkManager.service
 sudo systemctl enable --now bluetooth.service
 
 print_info "Setting up scripts..."
-chmod +x config/scripts/general/powermenu.sh
-if [ -f "config/scripts/general/nm-menu.sh" ]; then
-    chmod +x config/scripts/general/nm-menu.sh
-    print_info "Made network menu script executable."
+
+if [ -f "config/scripts/general/toggle-theme.sh" ]; then
+    chmod +x config/scripts/general/toggle-theme.sh
+    print_info "Made theme toggle script executable."
+fi
+
+if [ -d "config/scripts/waybar" ]; then
+    chmod +x config/scripts/waybar/*.sh
+    print_info "Made waybar control scripts executable."
 fi
 
 TIMEZONE=$(timedatectl show --property=Timezone --value)
@@ -37,12 +41,20 @@ fi
 
 mkdir -p ~/.config/waybar
 mkdir -p ~/.config/scripts/general
+mkdir -p ~/.config/scripts/waybar
 
 cp -rf config/waybar/* ~/.config/waybar/
-cp -rf config/scripts/general/powermenu.sh ~/.config/scripts/general/
-cp -rf config/scripts/general/nm-menu.sh ~/.config/scripts/general/
-chmod +x ~/.config/scripts/general/powermenu.sh
-chmod +x ~/.config/scripts/general/nm-menu.sh
+
+if [ -f "config/scripts/general/toggle-theme.sh" ]; then
+    cp config/scripts/general/toggle-theme.sh ~/.config/scripts/general/
+    chmod +x ~/.config/scripts/general/toggle-theme.sh
+fi
+
+if [ -d "config/scripts/waybar" ]; then
+    cp -rf config/scripts/waybar/* ~/.config/scripts/waybar/
+    chmod +x ~/.config/scripts/waybar/*.sh
+fi
+
 print_info "Copied Waybar configuration and scripts to user config directory."
 
 print_info "Adding Waybar autostart to Hyprland config..."
@@ -58,26 +70,4 @@ if pgrep -x "waybar" > /dev/null; then
     print_info "Restarted Waybar with new configuration."
 fi
 
-# Set up default volume limits
-print_info "Setting default volume limits..."
-if [ -f ~/.config/pulse/daemon.conf ]; then
-    # Backup existing config
-    cp ~/.config/pulse/daemon.conf ~/.config/pulse/daemon.conf.bak
-    # Update or add max volume setting
-    if grep -q "max-volume =" ~/.config/pulse/daemon.conf; then
-        sed -i 's/max-volume =.*/max-volume = 150/' ~/.config/pulse/daemon.conf
-    else
-        echo "max-volume = 150" >> ~/.config/pulse/daemon.conf
-    fi
-else
-    # Create config directory and file if they don't exist
-    mkdir -p ~/.config/pulse
-    echo "max-volume = 150" > ~/.config/pulse/daemon.conf
-fi
-
-print_info "Reloading PulseAudio to apply volume settings..."
-pulseaudio -k || true  # Kill PulseAudio if it's running
-sleep 1
-pulseaudio --start     # Restart PulseAudio
-
-print_success "✅ Waybar setup complete with modern design, custom menus, and volume controls."
+print_success "✅ Waybar setup complete with all scripts properly organized."
