@@ -12,15 +12,18 @@ sudo pacman -S --needed --noconfirm waybar \
     networkmanager network-manager-applet nm-connection-editor \
     bluez bluez-utils blueman \
     playerctl cava \
-    wofi ttf-firacode-nerd
+    wofi ttf-firacode-nerd \
+    libnotify
 
 print_info "Enabling and starting system services..."
 sudo systemctl enable --now NetworkManager.service
 sudo systemctl enable --now bluetooth.service
 
-if [ -f "config/scripts/general/powermenu.sh" ]; then
-    chmod +x config/scripts/general/powermenu.sh
-    print_info "Made power menu script executable."
+print_info "Setting up scripts..."
+chmod +x config/scripts/general/powermenu.sh
+if [ -f "config/scripts/general/nm-menu.sh" ]; then
+    chmod +x config/scripts/general/nm-menu.sh
+    print_info "Made network menu script executable."
 fi
 
 TIMEZONE=$(timedatectl show --property=Timezone --value)
@@ -36,8 +39,10 @@ mkdir -p ~/.config/scripts/general
 
 cp -rf config/waybar/* ~/.config/waybar/
 cp -rf config/scripts/general/powermenu.sh ~/.config/scripts/general/
+cp -rf config/scripts/general/nm-menu.sh ~/.config/scripts/general/
 chmod +x ~/.config/scripts/general/powermenu.sh
-print_info "Copied Waybar configuration to user config directory."
+chmod +x ~/.config/scripts/general/nm-menu.sh
+print_info "Copied Waybar configuration and scripts to user config directory."
 
 print_info "Adding Waybar autostart to Hyprland config..."
 if [ -f "config/hyprland/user.conf" ]; then
@@ -52,4 +57,4 @@ if pgrep -x "waybar" > /dev/null; then
     print_info "Restarted Waybar with new configuration."
 fi
 
-print_success "✅ Waybar setup complete with modern design, icons, and full functionality."
+print_success "✅ Waybar setup complete with modern design, custom menus, and pastel theme."

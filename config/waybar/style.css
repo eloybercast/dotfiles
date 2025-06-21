@@ -5,9 +5,9 @@
 }
 
 window#waybar {
-    background: rgba(30, 30, 46, 0.8);
+    background: rgba(0, 0, 0, 0.5);
     border-radius: 10px;
-    color: #cdd6f4;
+    color: #f8f9fa;
     margin: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
@@ -18,13 +18,14 @@ window#waybar.hidden {
 }
 
 #workspaces button {
-    padding: 0 6px;
-    margin: 4px 2px;
-    border-radius: 6px;
+    padding: 0 8px;
+    margin: 5px 2px;
+    border-radius: 8px;
     background-color: transparent;
-    color: #cdd6f4;
+    color: #f8f9fa;
     transition: all 0.3s ease;
     border: none;
+    font-size: 14px;
 }
 
 #workspaces button:hover {
@@ -35,27 +36,27 @@ window#waybar.hidden {
 }
 
 #workspaces button.active {
-    background-color: rgba(255, 140, 99, 0.2);
-    color: #FF8C63;
+    background-color: rgba(255, 175, 135, 0.2);
+    color: #ffafaf;
     border: none;
 }
 
 #workspaces button.urgent {
-    background-color: rgba(230, 57, 70, 0.2);
-    color: #e63946;
+    background-color: rgba(243, 139, 168, 0.2);
+    color: #f38ba8;
 }
 
 #custom-media {
-    background-color: #a8dadc;
-    color: #1d3557;
+    background-color: rgba(168, 218, 220, 0.2);
+    color: #a8dadc;
     border-radius: 10px;
     margin: 4px;
     padding: 0 10px;
 }
 
 #custom-cava {
-    background-color: #2a9d8f;
-    color: #f1faee;
+    background-color: rgba(42, 157, 143, 0.2);
+    color: #2a9d8f;
     border-radius: 10px;
     margin: 4px;
     padding: 0 10px;
@@ -63,91 +64,143 @@ window#waybar.hidden {
 }
 
 #clock {
-    margin: 2px 8px;
+    margin: 5px 8px;
     padding: 0 10px;
     border-radius: 8px;
-    background-color: rgba(137, 180, 250, 0.1);
-    color: #89b4fa;
+    background-color: rgba(137, 207, 240, 0.2);
+    color: #89cff0;
     font-weight: bold;
 }
 
+#clock:hover {
+    background-color: rgba(137, 207, 240, 0.3);
+}
+
+/* Calendar popup will be styled here */
+.calendar-popup {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.calendar-header {
+    font-weight: bold;
+    padding: 5px;
+    text-align: center;
+}
+
+.calendar-day {
+    padding: 2px 4px;
+    text-align: center;
+}
+
+.calendar-day.today {
+    background-color: rgba(255, 175, 135, 0.2);
+    border-radius: 4px;
+}
+
 #cpu {
-    color: #4ec2f7;
-    margin: 4px 2px;
+    color: #b5e8f7;
+    margin: 5px 2px;
     padding: 0 8px;
     border-radius: 8px;
-    background-color: rgba(78, 194, 247, 0.1);
+    background-color: rgba(181, 232, 247, 0.2);
 }
 
 #memory {
-    color: #9ece6a;
-    margin: 4px 2px;
+    color: #c1ffb8;
+    margin: 5px 2px;
     padding: 0 8px;
     border-radius: 8px;
-    background-color: rgba(158, 206, 106, 0.1);
+    background-color: rgba(193, 255, 184, 0.2);
 }
 
 #network {
     color: #f5c2e7;
-    margin: 4px 2px;
-    padding: 0 8px;
+    margin: 5px 2px;
+    padding: 0 10px;
     border-radius: 8px;
-    background-color: rgba(245, 194, 231, 0.1);
+    background-color: rgba(245, 194, 231, 0.2);
 }
 
 #network.disconnected {
-    color: #e63946;
-    background-color: rgba(230, 57, 70, 0.1);
+    color: #f38ba8;
+    background-color: rgba(243, 139, 168, 0.2);
+}
+
+/* Network menu will be styled here */
+.network-popup {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    min-width: 250px;
+}
+
+.network-item {
+    padding: 8px 10px;
+    margin: 2px 0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.network-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.network-item.connected {
+    background-color: rgba(193, 255, 184, 0.2);
 }
 
 #bluetooth {
     color: #89b4fa;
-    margin: 4px 2px;
-    padding: 0 8px;
+    margin: 5px 2px;
+    padding: 0 10px;
     border-radius: 8px;
-    background-color: rgba(137, 180, 250, 0.1);
+    background-color: rgba(137, 180, 250, 0.2);
 }
 
 #pulseaudio {
     color: #fab387;
-    margin: 4px 2px;
-    padding: 0 8px;
+    margin: 5px 2px;
+    padding: 0 10px;
     border-radius: 8px;
-    background-color: rgba(250, 179, 135, 0.1);
+    background-color: rgba(250, 179, 135, 0.2);
 }
 
 #pulseaudio.muted {
-    color: #e63946;
-    background-color: rgba(230, 57, 70, 0.1);
+    color: #f38ba8;
+    background-color: rgba(243, 139, 168, 0.2);
 }
 
 #pulseaudio.microphone {
     color: #cba6f7;
-    margin: 4px 2px;
-    padding: 0 8px;
+    margin: 5px 2px;
+    padding: 0 10px;
     border-radius: 8px;
-    background-color: rgba(203, 166, 247, 0.1);
+    background-color: rgba(203, 166, 247, 0.2);
 }
 
 #pulseaudio.microphone.source-muted {
-    color: #e63946;
-    background-color: rgba(230, 57, 70, 0.1);
+    color: #f38ba8;
+    background-color: rgba(243, 139, 168, 0.2);
 }
 
 #backlight {
     color: #f9e2af;
-    margin: 4px 2px;
-    padding: 0 8px;
+    margin: 5px 2px;
+    padding: 0 10px;
     border-radius: 8px;
-    background-color: rgba(249, 226, 175, 0.1);
+    background-color: rgba(249, 226, 175, 0.2);
 }
 
 #keyboard-state {
-    background-color: #a8dadc;
-    color: #1d3557;
-    border-radius: 10px;
+    color: #a8dadc;
     margin: 4px;
     padding: 0 10px;
+    border-radius: 10px;
+    background-color: rgba(168, 218, 220, 0.2);
 }
 
 #custom-separator {
@@ -155,18 +208,18 @@ window#waybar.hidden {
     margin: 0;
     padding: 0 1px;
     font-size: 18px;
-    opacity: 0.6;
+    opacity: 0.4;
 }
 
 #custom-power {
     color: #f38ba8;
-    margin: 4px 6px 4px 2px;
-    padding: 0 8px;
+    margin: 5px 6px 5px 2px;
+    padding: 0 10px;
     border-radius: 8px;
-    background-color: rgba(243, 139, 168, 0.1);
+    background-color: rgba(243, 139, 168, 0.2);
     font-size: 15px;
 }
 
 #custom-power:hover {
-    background-color: rgba(243, 139, 168, 0.2);
+    background-color: rgba(243, 139, 168, 0.3);
 } 
