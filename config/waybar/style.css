@@ -20,7 +20,7 @@ window#waybar.hidden {
 }
 
 #workspaces button:hover {
-    color: #ffffff;
+    background: rgba(0, 0, 0, 0.5);
 }
 
 #workspaces button.urgent {
