@@ -3,8 +3,8 @@
 # Turn off animations for cleaner look
 ~/.config/scripts/general/blur-hyprland.sh on
 
-# Run the power menu with minimalist parameters, using config file
-option=$(printf "⭮ Reboot\n󰍃 Logout\n⏻ Shutdown" | wofi \
+# Run the power menu with consistent icons, ensuring proper spacing
+option=$(printf "  󰜉  Reboot\n  󰍃  Logout\n  ⏻  Shutdown" | wofi \
     --conf ~/.config/wofi/config \
     --style ~/.config/wofi/power.css)
 
@@ -13,13 +13,13 @@ option=$(printf "⭮ Reboot\n󰍃 Logout\n⏻ Shutdown" | wofi \
 
 # Execute the selected command
 case "$option" in
-    "󰍃 Logout")
+    "  󰍃  Logout")
         hyprctl dispatch exit
         ;;
-    "⭮ Reboot")
+    "  󰜉  Reboot")
         systemctl reboot
         ;;
-    "⏻ Shutdown")
+    "  ⏻  Shutdown")
         systemctl poweroff
         ;;
 esac 
