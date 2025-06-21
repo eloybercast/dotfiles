@@ -65,7 +65,16 @@ window#waybar.hidden {
 #clock {
     color: #ffffff;
     margin: 2px;
-    padding: 0px 8px;
+    padding: 0px 10px;
+    font-weight: bold;
+}
+
+#clock:hover {
+    background: none;
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
+    outline: none;
 }
 
 #cpu {

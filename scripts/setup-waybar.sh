@@ -13,6 +13,14 @@ if [ -f "config/scripts/general/powermenu.sh" ]; then
     print_info "Made power menu script executable."
 fi
 
+TIMEZONE=$(timedatectl show --property=Timezone --value)
+print_info "Detected system timezone: $TIMEZONE"
+
+if [ -f "config/waybar/config.jsonc" ]; then
+    sed -i "s/\"timezone\": \".*\"/\"timezone\": \"$TIMEZONE\"/" config/waybar/config.jsonc
+    print_info "Updated Waybar config with system timezone: $TIMEZONE"
+fi
+
 print_info "Adding Waybar autostart to Hyprland config..."
 if [ -f "config/hyprland/user.conf" ]; then
     if ! grep -q "waybar" "config/hyprland/user.conf"; then
