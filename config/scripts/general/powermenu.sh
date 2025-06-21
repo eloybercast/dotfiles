@@ -1,23 +1,18 @@
 #!/usr/bin/env bash
 
+# Turn off animations for cleaner look
 ~/.config/scripts/general/blur-hyprland.sh on
 
+# Run the power menu with minimalist parameters, using config file
 option=$(printf "⭮ Reboot\n󰍃 Logout\n⏻ Shutdown" | wofi \
-    --dmenu \
-    --insensitive \
-    --width 100% \
-    --height 100% \
-    --location center \
-    --style ~/.config/wofi/power.css \
-    --hide-scroll \
-    --cache-file /dev/null \
-    --prompt " " \
-    --no-actions \
-    --columns 3)
+    --conf ~/.config/wofi/config \
+    --style ~/.config/wofi/power.css)
 
+# Restore animations
 ~/.config/scripts/general/blur-hyprland.sh off
 
-case $option in
+# Execute the selected command
+case "$option" in
     "󰍃 Logout")
         hyprctl dispatch exit
         ;;
