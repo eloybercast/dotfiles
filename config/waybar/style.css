@@ -63,10 +63,8 @@ window#waybar.hidden {
 }
 
 #clock {
-    color: #ffffff;
     margin: 2px;
     padding: 0px 10px;
-    font-weight: bold;
 }
 
 #clock:hover {
@@ -132,8 +130,19 @@ window#waybar.hidden {
 }
 
 #pulseaudio.microphone {
-    background-color: #cdb4db;
-    color: #1d3557;
+    color: #cdb4db;
+    margin: 2px;
+    padding: 0px 6px;
+}
+
+#pulseaudio.microphone.source-muted {
+    color: #e63946;
+}
+
+#backlight {
+    color: #ffb347;
+    margin: 2px;
+    padding: 0px 6px;
 }
 
 #keyboard-state {
