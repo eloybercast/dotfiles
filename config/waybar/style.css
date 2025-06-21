@@ -127,7 +127,6 @@ window#waybar.hidden {
     background-color: rgba(243, 139, 168, 0.2);
 }
 
-/* Network menu will be styled here */
 .network-popup {
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 10px;
@@ -163,8 +162,6 @@ window#waybar.hidden {
     color: #fab387;
     margin: 5px 2px;
     padding: 0 10px;
-    min-width: 16px;
-    width: auto;
     border-radius: 8px;
     background-color: rgba(250, 179, 135, 0.2);
     font-size: 16px;
@@ -178,8 +175,6 @@ window#waybar.hidden {
 #custom-mic {
     margin: 5px 2px;
     padding: 0 10px;
-    min-width: 16px;
-    width: auto;
     border-radius: 8px;
     background-color: rgba(203, 166, 247, 0.2);
     font-size: 16px;
