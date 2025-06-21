@@ -16,12 +16,7 @@ window#waybar.hidden {
 }
 
 #workspaces button {
-    border-radius: 8px;
-    margin: 0px 2px;
-    padding: 0px 5px;
-    background-color: transparent;
-    min-width: 20px;
-    font-weight: bold;
+    padding: 5px;
 }
 
 #workspaces button:hover {
@@ -29,8 +24,7 @@ window#waybar.hidden {
 }
 
 #workspaces button.urgent {
-    background-color: #e63946;
-    color: #f1faee;
+    color: #e63946;
 }
 
 #custom-media {
