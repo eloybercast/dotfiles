@@ -112,10 +112,10 @@
     },
 
     "pulseaudio": {
-        "format": "{icon} {volume}%",
-        "format-bluetooth": "󰂱 {volume}%",
-        "format-bluetooth-muted": "󰂲 0%",
-        "format-muted": "󰝟 0%",
+        "format": "{icon}",
+        "format-bluetooth": "󰂱",
+        "format-bluetooth-muted": "󰂲",
+        "format-muted": "󰝟",
         "format-icons": {
             "headphone": "󰋋",
             "hands-free": "󰋎",
@@ -138,7 +138,8 @@
         "on-scroll-down": "~/.config/scripts/waybar/mic-down.sh",
         "interval": 1,
         "format": "{}",
-        "tooltip": true
+        "tooltip": true,
+        "return-type": "json"
     },
 
     "backlight": {
