@@ -1,0 +1,105 @@
+/* Main window */
+window {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    font-family: "FiraCode Nerd Font", "Font Awesome 6 Free";
+    font-size: 14px;
+    color: #f8f9fa;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin: 5px;
+}
+
+/* Input field - hidden for power menu */
+#input {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    color: transparent;
+    box-shadow: none;
+    opacity: 0;
+    height: 0;
+}
+
+/* Search results */
+#outer-box {
+    padding: 10px;
+}
+
+#inner-box {
+    margin-top: 5px;
+    border-radius: 8px;
+    background-color: transparent;
+}
+
+/* List items */
+#entry {
+    padding: 12px 15px;
+    margin: 5px 0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+#entry:selected {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+#entry:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Item label */
+#entry label {
+    padding-left: 10px;
+}
+
+/* Power off */
+#entry.power-shutdown {
+    background-color: rgba(243, 139, 168, 0.2);
+    color: #f38ba8;
+}
+
+#entry.power-shutdown:hover {
+    background-color: rgba(243, 139, 168, 0.3);
+}
+
+/* Reboot */
+#entry.power-reboot {
+    background-color: rgba(250, 179, 135, 0.2);
+    color: #fab387;
+}
+
+#entry.power-reboot:hover {
+    background-color: rgba(250, 179, 135, 0.3);
+}
+
+/* Logout */
+#entry.power-logout {
+    background-color: rgba(137, 207, 240, 0.2);
+    color: #89cff0;
+}
+
+#entry.power-logout:hover {
+    background-color: rgba(137, 207, 240, 0.3);
+}
+
+/* Suspend */
+#entry.power-suspend {
+    background-color: rgba(193, 255, 184, 0.2);
+    color: #c1ffb8;
+}
+
+#entry.power-suspend:hover {
+    background-color: rgba(193, 255, 184, 0.3);
+}
+
+/* Lock */
+#entry.power-lock {
+    background-color: rgba(245, 194, 231, 0.2);
+    color: #f5c2e7;
+}
+
+#entry.power-lock:hover {
+    background-color: rgba(245, 194, 231, 0.3);
+} 

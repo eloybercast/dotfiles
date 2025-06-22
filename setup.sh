@@ -29,6 +29,12 @@ setup_waybar() {
     print_success "✅ Waybar setup complete"
 }
 
+setup_wofi() {
+    print_warning "⚙️ Setting up Wofi..."
+    bash scripts/setup-wofi.sh
+    print_success "✅ Wofi setup complete"
+}
+
 setup_zsh() {
     print_warning "⚙️ Setting up Zsh and Oh My Posh..."
     bash scripts/setup-zsh.sh
@@ -73,6 +79,7 @@ setup_all() {
     setup_browser
     setup_hyprland
     setup_waybar
+    setup_wofi
     setup_kitty
     setup_nautilus
     setup_themes
@@ -88,12 +95,13 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Browser" "Hyprland" "Waybar" "Zsh" "Kitty" "Nautilus" "Themes" "Scripts" "Config Files" "All" "Quit")
+    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Scripts" "Config Files" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Browser") setup_browser ;;
             "Hyprland") setup_hyprland ;;
             "Waybar") setup_waybar ;;
+            "Wofi") setup_wofi ;;
             "Zsh") setup_zsh ;;
             "Kitty") setup_kitty ;;
             "Nautilus") setup_nautilus ;;
@@ -112,10 +120,11 @@ show_help() {
     echo -e "\e[34mEloy Bermejo's Arch Hyprland Dotfiles Setup\e[0m"
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --all         Install all components (Browser, Hyprland, Waybar, Zsh, Kitty, Nautilus, Themes, Scripts)"
+    echo "  --all         Install all components (Browser, Hyprland, Waybar, Wofi, Zsh, Kitty, Nautilus, Themes, Scripts)"
     echo "  --browser     Install Browser"
     echo "  --hyprland    Install Hyprland and keybindings"
     echo "  --waybar      Install Waybar with icons and visualizer"
+    echo "  --wofi        Install Wofi app launcher and power menu"
     echo "  --zsh         Install Zsh and terminal emulator"
     echo "  --kitty       Install Kitty terminal with zsh integration"
     echo "  --nautilus    Install Nautilus file manager"
@@ -132,6 +141,7 @@ while [[ $# -gt 0 ]]; do
         --browser) setup_browser; shift ;;
         --hyprland) setup_hyprland; shift ;;
         --waybar) setup_waybar; shift ;;
+        --wofi) setup_wofi; shift ;;
         --zsh) setup_zsh; shift ;;
         --kitty) setup_kitty; shift ;;
         --nautilus) setup_nautilus; shift ;;

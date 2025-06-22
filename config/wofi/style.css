@@ -1,0 +1,113 @@
+/* Main window */
+window {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    font-family: "FiraCode Nerd Font", "Font Awesome 6 Free";
+    font-size: 13px;
+    color: #f8f9fa;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin: 5px;
+}
+
+/* Input field */
+#input {
+    margin: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f8f9fa;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#input:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    outline: none;
+}
+
+/* Search results */
+#outer-box {
+    padding: 10px;
+}
+
+#inner-box {
+    margin-top: 5px;
+    border-radius: 8px;
+    background-color: transparent;
+}
+
+/* List items */
+#entry {
+    padding: 8px 10px;
+    margin: 2px 0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+#entry:selected {
+    background-color: rgba(137, 207, 240, 0.2);
+    color: #89cff0;
+}
+
+#entry:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Application icon */
+#entry image {
+    margin-right: 10px;
+}
+
+/* Application name */
+#entry label {
+    color: #f8f9fa;
+}
+
+/* Scrollbar */
+#scroll {
+    margin-top: 5px;
+    border: none;
+}
+
+scrollbar {
+    background-color: transparent;
+    border-radius: 8px;
+    margin: 0 2px;
+}
+
+scrollbar slider {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    margin: 2px;
+}
+
+scrollbar slider:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* For power menu specific styling */
+#entry.power-entry {
+    padding: 12px;
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+#entry.power-shutdown {
+    color: #f38ba8;
+}
+
+#entry.power-reboot {
+    color: #fab387;
+}
+
+#entry.power-logout {
+    color: #89cff0;
+}
+
+#entry.power-suspend {
+    color: #c1ffb8;
+}
+
+#entry.power-lock {
+    color: #f5c2e7;
+} 
