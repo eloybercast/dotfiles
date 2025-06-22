@@ -54,52 +54,64 @@ window {
     padding-left: 10px;
 }
 
-/* Power off */
-#entry.power-shutdown {
-    background-color: rgba(243, 139, 168, 0.2);
+/* Span styling for power menu */
+.power-shutdown {
     color: #f38ba8;
 }
 
-#entry.power-shutdown:hover {
-    background-color: rgba(243, 139, 168, 0.3);
-}
-
-/* Reboot */
-#entry.power-reboot {
-    background-color: rgba(250, 179, 135, 0.2);
+.power-reboot {
     color: #fab387;
 }
 
-#entry.power-reboot:hover {
-    background-color: rgba(250, 179, 135, 0.3);
-}
-
-/* Logout */
-#entry.power-logout {
-    background-color: rgba(137, 207, 240, 0.2);
+.power-logout {
     color: #89cff0;
 }
 
-#entry.power-logout:hover {
-    background-color: rgba(137, 207, 240, 0.3);
-}
-
-/* Suspend */
-#entry.power-suspend {
-    background-color: rgba(193, 255, 184, 0.2);
+.power-suspend {
     color: #c1ffb8;
 }
 
-#entry.power-suspend:hover {
-    background-color: rgba(193, 255, 184, 0.3);
-}
-
-/* Lock */
-#entry.power-lock {
-    background-color: rgba(245, 194, 231, 0.2);
+.power-lock {
     color: #f5c2e7;
 }
 
-#entry.power-lock:hover {
+/* Background colors for entries */
+#entry:nth-child(1) {
+    background-color: rgba(243, 139, 168, 0.2);
+}
+
+#entry:nth-child(1):hover {
+    background-color: rgba(243, 139, 168, 0.3);
+}
+
+#entry:nth-child(2) {
+    background-color: rgba(250, 179, 135, 0.2);
+}
+
+#entry:nth-child(2):hover {
+    background-color: rgba(250, 179, 135, 0.3);
+}
+
+#entry:nth-child(3) {
+    background-color: rgba(137, 207, 240, 0.2);
+}
+
+#entry:nth-child(3):hover {
+    background-color: rgba(137, 207, 240, 0.3);
+}
+
+#entry:nth-child(4) {
+    background-color: rgba(193, 255, 184, 0.2);
+}
+
+#entry:nth-child(4):hover {
+    background-color: rgba(193, 255, 184, 0.3);
+}
+
+#entry:nth-child(5) {
+    background-color: rgba(245, 194, 231, 0.2);
+}
+
+#entry:nth-child(5):hover {
     background-color: rgba(245, 194, 231, 0.3);
 } 
