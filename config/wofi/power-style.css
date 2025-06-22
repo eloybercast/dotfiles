@@ -1,6 +1,5 @@
-/* Main window */
 window {
-    background-color: #1a1b26;
+    background-color: #212121;
     border-radius: 10px;
     font-family: "FiraCode Nerd Font", "Font Awesome 6 Free";
     font-size: 14px;
@@ -10,7 +9,6 @@ window {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Input field - hidden for power menu */
 #input {
     margin: 0;
     padding: 0;
@@ -33,7 +31,6 @@ window {
     background-color: transparent;
 }
 
-/* List items */
 #entry {
     padding: 12px 15px;
     margin: 5px 0;
@@ -50,12 +47,10 @@ window {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Item label */
 #entry label {
     padding-left: 10px;
 }
 
-/* Span styling for power menu */
 .power-shutdown {
     color: #f38ba8;
 }
@@ -72,7 +67,6 @@ window {
     color: #c1ffb8;
 }
 
-/* Background colors for entries */
 #entry:nth-child(1) {
     background-color: rgba(243, 139, 168, 0.2);
 }

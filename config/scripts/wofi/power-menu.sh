@@ -17,13 +17,14 @@ selected=$(cat "$entries_file" | wofi \
     --cache-file /dev/null \
     --insensitive \
     --width 300 \
-    --height 250 \
+    --height 300 \
     --conf "$HOME/.config/wofi/power-config" \
     --style "$HOME/.config/wofi/power-style.css" \
     --hide-scroll \
     --no-actions \
     --parse-search \
     --define "hide_search=true" \
+    --lines 4 \
     | sed -r 's/.*>(.*)<.*/\1/' \
     | awk '{print tolower($2)}')
 
