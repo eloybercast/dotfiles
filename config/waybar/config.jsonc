@@ -11,12 +11,12 @@
         "hyprland/workspaces",
         "custom/separator",
         "cpu",
-        "custom/separator",
         "memory"
     ],
     
     "modules-center": [
         "custom/menu",
+        "custom/separator",
         "clock",
         "custom/separator",
         "custom/dnd"
@@ -25,7 +25,6 @@
     "modules-right": [
         "custom/separator",
         "network",
-        "custom/separator",
         "bluetooth",
         "custom/separator",
         "pulseaudio",
