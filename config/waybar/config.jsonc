@@ -17,7 +17,6 @@
     
     "modules-center": [
         "custom/menu",
-        "custom/separator",
         "clock",
         "custom/separator",
         "custom/dnd"
@@ -178,6 +177,6 @@
     "custom/menu": {
         "format": "",
         "on-click": "~/.config/scripts/wofi/launcher.sh",
-        "tooltip": false
+        "tooltip": "Applications"
     }
 } 
