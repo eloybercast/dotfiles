@@ -77,7 +77,6 @@ window#waybar.hidden {
     background-color: rgba(137, 207, 240, 0.3);
 }
 
-/* Calendar popup will be styled here */
 .calendar-popup {
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 10px;

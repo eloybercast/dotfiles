@@ -30,7 +30,6 @@ require_dependency() {
 }
 
 install_oh_my_posh() {
-    # Check if oh-my-posh is already installed
     if [ -x "$HOME/.local/bin/oh-my-posh" ]; then
         print_success "oh-my-posh is already installed"
         return
@@ -192,39 +191,30 @@ write_zshrc() {
     fi
 
     cat > "$HOME/.zshrc" <<EOF
-# ZSH Configuration for Eloy Bermejo's dotfiles
 
-# Add local bin to PATH
 export PATH="\$HOME/.local/bin:\$PATH"
 
-# Set ZSH custom directory
 ZSH_CUSTOM="\$HOME/.zsh"
 
-# Load plugins
 [ -f "\$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "\$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 [ -f "\$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && source "\$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh"
 [ -f "\$ZSH_CUSTOM/z/z.sh" ] && source "\$ZSH_CUSTOM/z/z.sh"
 
-# Initialize oh-my-posh with theme
 if [ -x "\$HOME/.local/bin/oh-my-posh" ]; then
     eval "\$(\$HOME/.local/bin/oh-my-posh init zsh --config $theme_path)"
 else
     echo "Warning: oh-my-posh not found in \$HOME/.local/bin"
 fi
 
-# Completion system
 autoload -U compinit && compinit
 setopt prompt_subst
 
-# Key bindings
 bindkey '^R' history-incremental-search-backward
 zstyle ':completion:*' menu select
 bindkey -v
 
-# Environment variables
 export EDITOR=nano
 
-# Aliases
 alias ls='ls --color=auto'
 alias ll='ls -la'
 alias la='ls -a'
@@ -256,7 +246,6 @@ main() {
 
     require_dependency git curl sed wget
 
-    # Check if zsh is already installed
     if command -v zsh &>/dev/null; then
         print_success "zsh is already installed"
     else

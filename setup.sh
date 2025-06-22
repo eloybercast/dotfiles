@@ -2,7 +2,6 @@
 
 source scripts/utils.sh
 
-# Display welcome message and step-by-step guidance
 show_welcome() {
     print_ascii_art
     echo -e "\e[34m🎉 Welcome to Eloy Bermejo's Arch Hyprland Dotfiles Setup! 🎉\e[0m"

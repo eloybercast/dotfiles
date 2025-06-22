@@ -60,7 +60,6 @@ main() {
     print_info "Copying configuration files to $target_dir..."
     copy_recursive "$config_dir" "$target_dir"
     
-    # Ensure scripts directory is executable
     if [ -d "$target_dir/scripts" ]; then
         print_info "Making scripts executable..."
         find "$target_dir/scripts" -type f -name "*.sh" -exec chmod +x {} \;
