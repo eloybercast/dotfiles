@@ -3,10 +3,10 @@
 toggle_dnd() {
     if makoctl mode | grep -q "do-not-disturb"; then
         makoctl mode -r do-not-disturb
-        notify-send "Notifications" "DND disabled" -a "System" -i dialog-information -t 1000
+        notify-send "DND OFF" -a "System" -i dialog-information -t 500
     else
         makoctl mode -a do-not-disturb
-        notify-send "Notifications" "DND enabled" -a "System" -i dialog-information -t 1000
+        notify-send "DND ON" -a "System" -i dialog-information -t 500
     fi
 }
 
