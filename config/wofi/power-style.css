@@ -62,10 +62,6 @@ window {
     color: #89cff0;
 }
 
-.power-suspend {
-    color: #c1ffb8;
-}
-
 #entry:nth-child(1) {
     background-color: rgba(243, 139, 168, 0.2);
 }

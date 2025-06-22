@@ -11,9 +11,6 @@ case $selected in
   reboot)
     systemctl reboot
     ;;
-  suspend)
-    systemctl suspend
-    ;;
   logout)
     hyprctl dispatch exit
     ;;

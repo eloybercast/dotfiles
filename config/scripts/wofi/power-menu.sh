@@ -36,7 +36,4 @@ case $selected in
     logout)
         hyprctl dispatch exit
         ;;
-    suspend)
-        systemctl suspend
-        ;;
 esac 

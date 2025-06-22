@@ -97,10 +97,6 @@ scrollbar slider:hover {
     color: #89cff0;
 }
 
-#entry.power-suspend {
-    color: #c1ffb8;
-}
-
 #entry.power-lock {
     color: #f5c2e7;
 } 
