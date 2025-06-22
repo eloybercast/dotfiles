@@ -23,7 +23,6 @@
     ],
     
     "modules-right": [
-        "custom/separator",
         "network",
         "bluetooth",
         "custom/separator",

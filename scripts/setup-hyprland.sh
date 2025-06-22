@@ -30,6 +30,21 @@ setup_hyprland() {
     for pkg in "${packages[@]}"; do
         install_package "$pkg"
     done
+    
+    print_info "Copying Hyprland configuration files..."
+    mkdir -p "$HOME/.config/hyprland"
+    
+    if [ -d "config/hyprland" ]; then
+        cp -r config/hyprland/* "$HOME/.config/hyprland/"
+        print_success "Hyprland configuration files copied successfully"
+    else
+        print_error "Hyprland configuration directory not found"
+    fi
+    
+    if [ ! -d "$HOME/.config/hypr" ]; then
+        ln -sf "$HOME/.config/hyprland" "$HOME/.config/hypr"
+        print_info "Created symbolic link from ~/.config/hypr to ~/.config/hyprland for compatibility"
+    fi
 }
 
 setup_hyprland
