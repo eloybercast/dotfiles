@@ -32,18 +32,18 @@ setup_hyprland() {
     done
     
     print_info "Copying Hyprland configuration files..."
-    mkdir -p "$HOME/.config/hyprland"
+    mkdir -p "$HOME/.config/hypr"
     
     if [ -d "config/hyprland" ]; then
-        cp -r config/hyprland/* "$HOME/.config/hyprland/"
+        cp -r config/hyprland/* "$HOME/.config/hypr/"
         print_success "Hyprland configuration files copied successfully"
     else
         print_error "Hyprland configuration directory not found"
     fi
     
-    if [ ! -d "$HOME/.config/hypr" ]; then
-        ln -sf "$HOME/.config/hyprland" "$HOME/.config/hypr"
-        print_info "Created symbolic link from ~/.config/hypr to ~/.config/hyprland for compatibility"
+    if [ ! -d "$HOME/.config/hyprland" ]; then
+        ln -sf "$HOME/.config/hypr" "$HOME/.config/hyprland"
+        print_info "Created symbolic link from ~/.config/hyprland to ~/.config/hypr for compatibility"
     fi
 }
 
