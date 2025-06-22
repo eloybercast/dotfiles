@@ -1,5 +1,5 @@
 font=FiraCode Nerd Font 11
-background-color=rgba(0, 0, 0, 0.8)
+background-color=rgba(0,0,0,0.8)
 text-color=#f8f9fa
 width=350
 height=100
@@ -18,20 +18,20 @@ default-timeout=5000
 
 [urgency=low]
 border-color=#89b4fa
-background-color=rgba(137, 180, 250, 0.2)
+background-color=rgba(137,180,250,0.2)
 
 [urgency=normal]
 border-color=#89cff0
-background-color=rgba(137, 207, 240, 0.2)
+background-color=rgba(137,207,240,0.2)
 
 [urgency=high]
 border-color=#f38ba8
-background-color=rgba(243, 139, 168, 0.2)
+background-color=rgba(243,139,168,0.2)
 default-timeout=0
 
 # Animations
 [app-name=Spotify]
-background-color=rgba(42, 157, 143, 0.2)
+background-color=rgba(42,157,143,0.2)
 border-color=#2a9d8f
 
 [mode=do-not-disturb]
