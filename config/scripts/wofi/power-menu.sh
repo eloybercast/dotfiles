@@ -9,7 +9,6 @@ cat > "$entries_file" << EOF
 <span class="power-reboot">⟳  Reboot</span>
 <span class="power-logout">⇠  Logout</span>
 <span class="power-suspend">  Suspend</span>
-<span class="power-lock">  Lock</span>
 EOF
 
 # Use wofi to display the power menu
@@ -18,7 +17,7 @@ selected=$(cat "$entries_file" | wofi \
     --cache-file /dev/null \
     --insensitive \
     --width 300 \
-    --height 290 \
+    --height 250 \
     --conf "$HOME/.config/wofi/power-config" \
     --style "$HOME/.config/wofi/power-style.css" \
     --hide-scroll \
@@ -44,8 +43,5 @@ case $selected in
         ;;
     suspend)
         systemctl suspend
-        ;;
-    lock)
-        swaylock
         ;;
 esac 
