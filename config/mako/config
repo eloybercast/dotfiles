@@ -1,47 +1,38 @@
-# Mako configuration
-# Appearance
 font=FiraCode Nerd Font 11
 background-color=rgba(0, 0, 0, 0.8)
 text-color=#f8f9fa
 width=350
 height=100
-margin=5
+margin=5,5,5
 padding=10
 border-size=2
-border-color=#89cff0
 border-radius=10
-progress-color=source #89cff0
-
-css-path=/home/eloy/Documents/eloybercast/dotfiles/config/mako/style.css
-
+progress-color=over #89cff0
+icons=1
+max-icon-size=64
+icon-path=/usr/share/icons/Papirus-Dark:/usr/share/icons/Papirus
+markup=1
+actions=1
+format=<b>%s</b>\n%b
 default-timeout=5000
-ignore-timeout=0
-max-visible=5
 
 [urgency=low]
-border-color=#f9e2af
-default-timeout=4000
+border-color=#89b4fa
+background-color=rgba(137, 180, 250, 0.2)
 
 [urgency=normal]
-border-color=#89b4fa
-default-timeout=5000
+border-color=#89cff0
+background-color=rgba(137, 207, 240, 0.2)
 
 [urgency=high]
 border-color=#f38ba8
+background-color=rgba(243, 139, 168, 0.2)
 default-timeout=0
 
-[category=network]
-background-color=rgba(245, 194, 231, 0.2)
-border-color=#f5c2e7
+# Animations
+[app-name=Spotify]
+background-color=rgba(42, 157, 143, 0.2)
+border-color=#2a9d8f
 
-[category=volume]
-background-color=rgba(250, 179, 135, 0.2)
-border-color=#fab387
-
-[category=brightness]
-background-color=rgba(249, 226, 175, 0.2)
-border-color=#f9e2af
-
-[app-name=spotify]
-background-color=rgba(168, 218, 220, 0.2)
-border-color=#a8dadc 
+[mode=do-not-disturb]
+invisible=1 

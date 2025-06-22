@@ -70,6 +70,12 @@ setup_config_files() {
     print_success "✅ Config Files setup complete"
 }
 
+setup_mako() {
+    print_warning "⚙️ Setting up Mako notifications..."
+    bash scripts/setup-mako.sh
+    print_success "✅ Mako notifications setup complete"
+}
+
 setup_all() {
     show_welcome
     
@@ -83,6 +89,7 @@ setup_all() {
     setup_nautilus
     setup_themes
     setup_scripts
+    setup_mako
     
     setup_config_files
     
@@ -94,7 +101,7 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Scripts" "Config Files" "All" "Quit")
+    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Scripts" "Mako" "Config Files" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Browser") setup_browser ;;
@@ -106,6 +113,7 @@ interactive_mode() {
             "Nautilus") setup_nautilus ;;
             "Themes") setup_themes ;;
             "Scripts") setup_scripts ;;
+            "Mako") setup_mako ;;
             "Config Files") setup_config_files ;;
             "All") setup_all; break ;;
             "Quit") break ;;
@@ -119,7 +127,7 @@ show_help() {
     echo -e "\e[34mEloy Bermejo's Arch Hyprland Dotfiles Setup\e[0m"
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --all         Install all components (Browser, Hyprland, Waybar, Wofi, Zsh, Kitty, Nautilus, Themes, Scripts)"
+    echo "  --all         Install all components (Browser, Hyprland, Waybar, Wofi, Zsh, Kitty, Nautilus, Themes, Scripts, Mako)"
     echo "  --browser     Install Browser"
     echo "  --hyprland    Install Hyprland and keybindings"
     echo "  --waybar      Install Waybar with icons and visualizer"
@@ -129,6 +137,7 @@ show_help() {
     echo "  --nautilus    Install Nautilus file manager"
     echo "  --themes      Install wallpapers, music, and themes"
     echo "  --scripts     Install scripts to user config directory"
+    echo "  --mako        Install Mako notification daemon"
     echo "  --config-files Install config files to user config directory"
     echo "  --interactive Interactive mode with menu"
     echo "  --help        Show this help message"
@@ -146,6 +155,7 @@ while [[ $# -gt 0 ]]; do
         --nautilus) setup_nautilus; shift ;;
         --themes) setup_themes; shift ;;
         --scripts) setup_scripts; shift ;;
+        --mako) setup_mako; shift ;;
         --config-files) setup_config_files; shift ;;
         --interactive) interactive_mode; shift ;;
         --help) show_help; exit 0 ;;
