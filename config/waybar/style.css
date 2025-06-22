@@ -232,4 +232,37 @@ window#waybar.hidden {
 
 #custom-power:hover {
     background-color: rgba(243, 139, 168, 0.3);
+}
+
+#custom-dnd {
+    color: #cba6f7;
+    margin: 5px 2px;
+    padding: 0 10px;
+    border-radius: 8px;
+    background-color: rgba(203, 166, 247, 0.2);
+    font-size: 15px;
+    min-width: 28px;
+}
+
+#custom-dnd.dnd-enabled {
+    color: #f38ba8;
+    background-color: rgba(243, 139, 168, 0.2);
+}
+
+#custom-dnd:hover {
+    background-color: rgba(203, 166, 247, 0.3);
+}
+
+#custom-menu {
+    color: #1793d1;
+    margin: 5px 2px;
+    padding: 0 10px;
+    border-radius: 8px;
+    background-color: rgba(23, 147, 209, 0.2);
+    font-size: 15px;
+    min-width: 28px;
+}
+
+#custom-menu:hover {
+    background-color: rgba(23, 147, 209, 0.3);
 } 

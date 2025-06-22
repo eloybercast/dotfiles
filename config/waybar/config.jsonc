@@ -16,7 +16,11 @@
     ],
     
     "modules-center": [
-        "clock"
+        "custom/menu",
+        "custom/separator",
+        "clock",
+        "custom/separator",
+        "custom/dnd"
     ],
     
     "modules-right": [
@@ -159,6 +163,21 @@
     "custom/power": {
         "format": "󰐥",
         "on-click": "~/.config/scripts/waybar/powermenu.sh",
+        "tooltip": false
+    },
+
+    "custom/dnd": {
+        "exec": "~/.config/scripts/general/dnd-status.sh",
+        "interval": 1,
+        "format": "{}",
+        "on-click": "~/.config/scripts/general/notifications.sh toggle-dnd",
+        "tooltip": true,
+        "return-type": "json"
+    },
+
+    "custom/menu": {
+        "format": "",
+        "on-click": "~/.config/scripts/wofi/launcher.sh",
         "tooltip": false
     }
 } 
