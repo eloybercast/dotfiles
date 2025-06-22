@@ -86,8 +86,8 @@ setup_all() {
     setup_waybar
     setup_wofi
     setup_kitty
-    setup_nautilus
     setup_themes
+    setup_nautilus
     setup_scripts
     setup_mako
     

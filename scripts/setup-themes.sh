@@ -13,6 +13,18 @@ FONT="Ubuntu 10"
 setup_candy_icons() {
     print_info "Setting up Candy icons..."
     
+    if ! command -v git &> /dev/null; then
+        print_warning "Git is required but not installed. Installing git..."
+        if command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm git
+        elif command -v apt &> /dev/null; then
+            sudo apt install -y git
+        else
+            print_error "Unsupported package manager. Please install git manually."
+            return 1
+        fi
+    fi
+    
     if [ -d "$HOME/.local/share/icons/candy-icons" ]; then
         print_info "Candy icons already installed, updating..."
         cd "$HOME/.local/share/icons/candy-icons"
