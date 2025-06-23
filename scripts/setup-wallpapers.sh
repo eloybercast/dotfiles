@@ -34,13 +34,28 @@ if [ -z "\$WALLPAPER" ] || [ ! -f "\$WALLPAPER" ]; then
     exit 1
 fi
 
+# Ensure Wayland display is set
+if [ -z "\$WAYLAND_DISPLAY" ]; then
+    export WAYLAND_DISPLAY=wayland-0
+fi
+
+# Ensure XDG_RUNTIME_DIR is set
+if [ -z "\$XDG_RUNTIME_DIR" ]; then
+    export XDG_RUNTIME_DIR=/run/user/\$(id -u)
+fi
+
 # Try swww first
 if command -v swww &> /dev/null; then
-    swww query || swww init
-    if swww query; then
-        swww img "\$WALLPAPER" --transition-type grow --transition-pos center
+    # Force initialize swww (ignore errors)
+    swww init 2>/dev/null || true
+    sleep 1
+    
+    # Try to set wallpaper with swww
+    if swww img "\$WALLPAPER" --transition-type grow --transition-pos center 2>/dev/null; then
         echo "Set wallpaper using swww"
         exit 0
+    else
+        echo "swww failed, trying alternative methods"
     fi
 fi
 
@@ -64,9 +79,44 @@ EOF
         
         echo "" >> "$HOME/.config/hypr/hyprland.conf"
         echo "# Wallpaper setup - tries multiple methods" >> "$HOME/.config/hypr/hyprland.conf"
-        echo "exec-once = sleep 1 && ~/.config/scripts/general/set-wallpaper.sh \$HOME/Pictures/Wallpapers/default.png" >> "$HOME/.config/hypr/hyprland.conf"
+        echo "exec-once = sleep 2 && ~/.config/scripts/general/set-wallpaper.sh \$HOME/Pictures/Wallpapers/default.png" >> "$HOME/.config/hypr/hyprland.conf"
         
         print_info "Updated Hyprland config to use fallback wallpaper script"
+    fi
+    
+    # Ensure env variables for Wayland in VMs
+    print_info "Checking environment variables for VM compatibility..."
+    ENV_CONF="$HOME/.config/hypr/env.conf"
+    
+    if [ -f "$ENV_CONF" ]; then
+        # Make sure VM-related variables are set
+        if ! grep -q "WAYLAND_DISPLAY" "$ENV_CONF"; then
+            cat >> "$ENV_CONF" <<EOF
+
+# Fix for VM and wallpaper issues
+export WAYLAND_DISPLAY=wayland-0
+export XDG_RUNTIME_DIR=/run/user/\$(id -u)
+export WLR_NO_HARDWARE_CURSORS=1
+export WLR_RENDERER_ALLOW_SOFTWARE=1
+EOF
+            print_info "Added VM compatibility variables to env.conf"
+        fi
+    else
+        # Create env.conf if it doesn't exist
+        mkdir -p "$HOME/.config/hypr"
+        cat > "$ENV_CONF" <<EOF
+# General Wayland environment variables
+export XDG_SESSION_TYPE=wayland
+export MOZ_ENABLE_WAYLAND=1
+export QT_QPA_PLATFORM=wayland
+
+# Fix for VM and wallpaper issues
+export WAYLAND_DISPLAY=wayland-0
+export XDG_RUNTIME_DIR=/run/user/\$(id -u)
+export WLR_NO_HARDWARE_CURSORS=1
+export WLR_RENDERER_ALLOW_SOFTWARE=1
+EOF
+        print_info "Created env.conf with VM compatibility variables"
     fi
     
     if [ -d "assets/wallpapers" ]; then
@@ -82,6 +132,10 @@ EOF
         if [ -n "$FIRST_WALLPAPER" ]; then
             ln -sf "$FIRST_WALLPAPER" "$WALLPAPERS_DIR/default.png"
             print_info "Setting initial wallpaper: $(basename "$FIRST_WALLPAPER")"
+            
+            # Export the Wayland display variable before trying to set wallpaper
+            export WAYLAND_DISPLAY=wayland-0
+            export XDG_RUNTIME_DIR=/run/user/$(id -u)
             
             "$HOME/.config/scripts/general/set-wallpaper.sh" "$FIRST_WALLPAPER"
         fi

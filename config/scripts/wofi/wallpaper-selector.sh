@@ -5,6 +5,17 @@ CACHE_DIR="$HOME/.cache/wofi-wallpaper"
 THUMBNAIL_SIZE=200
 WALLPAPER_SCRIPT="$HOME/.config/scripts/general/set-wallpaper.sh"
 
+if [ -z "$WAYLAND_DISPLAY" ]; then
+    export WAYLAND_DISPLAY=wayland-0
+fi
+
+if [ -z "$XDG_RUNTIME_DIR" ]; then
+    export XDG_RUNTIME_DIR=/run/user/$(id -u)
+fi
+
+export WLR_NO_HARDWARE_CURSORS=1
+export WLR_RENDERER_ALLOW_SOFTWARE=1
+
 mkdir -p "$CACHE_DIR"
 
 if ! command -v convert &> /dev/null; then
@@ -101,7 +112,9 @@ if [ -n "$selected" ]; then
         notify-send "Wallpaper Error" "Wallpaper script not found at $WALLPAPER_SCRIPT" -i dialog-error
         
         if command -v swww &> /dev/null; then
-            swww query || swww init
+            swww init 2>/dev/null || true
+            sleep 1
+            
             if swww img "$wallpaper_path" --transition-type grow --transition-pos center; then
                 notify-send "Wallpaper" "Set wallpaper to $selected with swww" -i "$wallpaper_path"
             else
