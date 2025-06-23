@@ -83,9 +83,9 @@ setup_mako() {
 }
 
 setup_sddm() {
-    print_warning "⚙️ Setting up SDDM with Chili theme..."
+    print_warning "⚙️ Setting up SDDM login manager..."
     bash scripts/setup-sddm.sh
-    print_success "✅ SDDM setup complete"
+    print_success "✅ SDDM login manager setup complete"
 }
 
 setup_all() {
@@ -95,13 +95,13 @@ setup_all() {
     setup_browser
     
     setup_hyprland
-    setup_sddm
     
     setup_kitty
     setup_themes
     setup_nautilus
     setup_scripts
     setup_mako
+    setup_sddm
     
     setup_waybar
     setup_wofi
@@ -118,12 +118,11 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Browser" "Hyprland" "SDDM" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "All" "Quit")
+    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "SDDM" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Browser") setup_browser ;;
             "Hyprland") setup_hyprland ;;
-            "SDDM") setup_sddm ;;
             "Waybar") setup_waybar ;;
             "Wofi") setup_wofi ;;
             "Zsh") setup_zsh ;;
@@ -134,6 +133,7 @@ interactive_mode() {
             "Scripts") setup_scripts ;;
             "Mako") setup_mako ;;
             "Config Files") setup_config_files ;;
+            "SDDM") setup_sddm ;;
             "All") setup_all; break ;;
             "Quit") break ;;
             *) echo "Invalid option" ;;
@@ -146,10 +146,9 @@ show_help() {
     echo -e "\e[34mEloy Bermejo's Arch Hyprland Dotfiles Setup\e[0m"
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --all         Install all components (Browser, Hyprland, SDDM, Waybar, Wofi, Zsh, Kitty, Nautilus, Themes, Wallpapers, Scripts, Mako)"
+    echo "  --all         Install all components (Browser, Hyprland, Waybar, Wofi, Zsh, Kitty, Nautilus, Themes, Wallpapers, Scripts, Mako, SDDM)"
     echo "  --browser     Install Browser"
     echo "  --hyprland    Install Hyprland and keybindings"
-    echo "  --sddm        Install SDDM with Chili theme"
     echo "  --waybar      Install Waybar with icons and visualizer"
     echo "  --wofi        Install Wofi app launcher and power menu"
     echo "  --zsh         Install Zsh and terminal emulator"
@@ -160,6 +159,7 @@ show_help() {
     echo "  --scripts     Install scripts to user config directory"
     echo "  --mako        Install Mako notification daemon"
     echo "  --config-files Install config files to user config directory"
+    echo "  --sddm        Install SDDM login manager with Minegrub theme"
     echo "  --interactive Interactive mode with menu"
     echo "  --help        Show this help message"
 }
@@ -169,7 +169,6 @@ while [[ $# -gt 0 ]]; do
         --all) setup_all; shift ;;
         --browser) setup_browser; shift ;;
         --hyprland) setup_hyprland; shift ;;
-        --sddm) setup_sddm; shift ;;
         --waybar) setup_waybar; shift ;;
         --wofi) setup_wofi; shift ;;
         --zsh) setup_zsh; shift ;;
@@ -180,6 +179,7 @@ while [[ $# -gt 0 ]]; do
         --scripts) setup_scripts; shift ;;
         --mako) setup_mako; shift ;;
         --config-files) setup_config_files; shift ;;
+        --sddm) setup_sddm; shift ;;
         --interactive) interactive_mode; shift ;;
         --help) show_help; exit 0 ;;
         *) print_error "Unknown option: $1"; show_help; exit 1 ;;
