@@ -5,6 +5,7 @@ CACHE_DIR="$HOME/.cache/wofi-wallpaper"
 THUMBNAIL_SIZE=200
 WALLPAPER_SCRIPT="$HOME/.config/scripts/general/set-wallpaper.sh"
 
+# Ensure Wayland display variables are set (for VM compatibility)
 if [ -z "$WAYLAND_DISPLAY" ]; then
     export WAYLAND_DISPLAY=wayland-0
 fi
@@ -13,8 +14,16 @@ if [ -z "$XDG_RUNTIME_DIR" ]; then
     export XDG_RUNTIME_DIR=/run/user/$(id -u)
 fi
 
+# VM compatibility for Hyprland
 export WLR_NO_HARDWARE_CURSORS=1
 export WLR_RENDERER_ALLOW_SOFTWARE=1
+
+# Check if running in a VM
+if grep -q "hypervisor" /proc/cpuinfo || systemd-detect-virt -q; then
+    VM_DETECTED=true
+else
+    VM_DETECTED=false
+fi
 
 mkdir -p "$CACHE_DIR"
 
@@ -93,6 +102,20 @@ if [ -n "$selected" ]; then
     
     ln -sf "$wallpaper_path" "$WALLPAPERS_DIR/default.png"
     
+    # In VM environments, prefer using swaybg directly
+    if [ "$VM_DETECTED" = true ]; then
+        notify-send "Wallpaper" "VM detected, using swaybg directly" -i "$wallpaper_path"
+        pkill swaybg 2>/dev/null || true
+        swaybg -i "$wallpaper_path" -m fill &
+        exit_code=$?
+        
+        if [ $exit_code -eq 0 ]; then
+            notify-send "Wallpaper" "Wallpaper set successfully with swaybg (VM-optimized)" -i "$wallpaper_path"
+            exit 0
+        fi
+    fi
+    
+    # Use the universal script if available
     if [ -x "$WALLPAPER_SCRIPT" ]; then
         result=$("$WALLPAPER_SCRIPT" "$wallpaper_path" 2>&1)
         if [ $? -eq 0 ]; then
@@ -105,13 +128,21 @@ if [ -n "$selected" ]; then
                 swaybg -i "$wallpaper_path" -m fill &
                 notify-send "Wallpaper" "Set wallpaper to $selected with swaybg (fallback)" -i "$wallpaper_path"
             else
-                notify-send "Wallpaper Error" "No wallpaper setter available. Install swww or swaybg." -i dialog-error
+                notify-send "Wallpaper Error" "No wallpaper setter available. Install swaybg." -i dialog-error
             fi
         fi
     else
         notify-send "Wallpaper Error" "Wallpaper script not found at $WALLPAPER_SCRIPT" -i dialog-error
         
-        if command -v swww &> /dev/null; then
+        if [ "$VM_DETECTED" = true ] || ! command -v swww &> /dev/null; then
+            if command -v swaybg &> /dev/null; then
+                pkill swaybg 2>/dev/null || true
+                swaybg -i "$wallpaper_path" -m fill &
+                notify-send "Wallpaper" "Set wallpaper to $selected with swaybg" -i "$wallpaper_path"
+            else
+                notify-send "Wallpaper Error" "No supported wallpaper setter found. Please install swaybg." -i dialog-error
+            fi
+        else
             swww init 2>/dev/null || true
             sleep 1
             
@@ -123,15 +154,9 @@ if [ -n "$selected" ]; then
                     swaybg -i "$wallpaper_path" -m fill &
                     notify-send "Wallpaper" "Set wallpaper to $selected with swaybg (fallback)" -i "$wallpaper_path"
                 else
-                    notify-send "Wallpaper Error" "No wallpaper setter available. Install swww or swaybg." -i dialog-error
+                    notify-send "Wallpaper Error" "No wallpaper setter available. Install swaybg." -i dialog-error
                 fi
             fi
-        elif command -v swaybg &> /dev/null; then
-            pkill swaybg 2>/dev/null || true
-            swaybg -i "$wallpaper_path" -m fill &
-            notify-send "Wallpaper" "Set wallpaper to $selected with swaybg" -i "$wallpaper_path"
-        else
-            notify-send "Wallpaper Error" "No supported wallpaper setter found. Please install swww or swaybg." -i dialog-error
         fi
     fi
 else

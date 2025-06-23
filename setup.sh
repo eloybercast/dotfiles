@@ -86,17 +86,20 @@ setup_all() {
     show_welcome
     
     setup_zsh
-    
     setup_browser
+    
     setup_hyprland
-    setup_waybar
-    setup_wofi
+    
     setup_kitty
     setup_themes
-    setup_wallpapers
     setup_nautilus
     setup_scripts
     setup_mako
+    
+    setup_waybar
+    setup_wofi
+    
+    setup_wallpapers
     
     setup_config_files
     
