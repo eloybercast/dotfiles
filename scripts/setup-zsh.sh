@@ -80,6 +80,7 @@ setup_plugins() {
 
     clone_plugin https://github.com/zsh-users/zsh-syntax-highlighting.git "$zsh_custom/zsh-syntax-highlighting"
     clone_plugin https://github.com/zsh-users/zsh-autosuggestions.git "$zsh_custom/zsh-autosuggestions"
+    clone_plugin https://github.com/zsh-users/zsh-completions.git "$zsh_custom/zsh-completions"
     clone_plugin https://github.com/rupa/z.git "$zsh_custom/z"
 }
 
@@ -191,30 +192,69 @@ write_zshrc() {
     fi
 
     cat > "$HOME/.zshrc" <<EOF
-
+# Path configuration
 export PATH="\$HOME/.local/bin:\$PATH"
 
+# ZSH custom directory
 ZSH_CUSTOM="\$HOME/.zsh"
 
+# Add zsh-completions to fpath
+fpath=(\$ZSH_CUSTOM/zsh-completions/src \$fpath)
+
+# Initialize completion system
+autoload -Uz compinit
+compinit -i
+
+# Enable menu-driven completion
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
+zstyle ':completion:*' list-colors "\${(s.:.)LS_COLORS}" # Colored completion
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:descriptions' format '%B%d%b'
+zstyle ':completion:*:messages' format '%d'
+zstyle ':completion:*:warnings' format 'No matches for: %d'
+zstyle ':completion:*' group-name ''
+
+# Load plugins
 [ -f "\$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "\$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 [ -f "\$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && source "\$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh"
 [ -f "\$ZSH_CUSTOM/z/z.sh" ] && source "\$ZSH_CUSTOM/z/z.sh"
 
+# Oh My Posh theme
 if [ -x "\$HOME/.local/bin/oh-my-posh" ]; then
     eval "\$(\$HOME/.local/bin/oh-my-posh init zsh --config $theme_path)"
 else
     echo "Warning: oh-my-posh not found in \$HOME/.local/bin"
 fi
 
-autoload -U compinit && compinit
+# Shell options
 setopt prompt_subst
+setopt auto_menu
+setopt complete_in_word
+setopt always_to_end
+setopt extended_history
+setopt hist_expire_dups_first
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_verify
+setopt share_history
 
+# Key bindings
 bindkey '^R' history-incremental-search-backward
-zstyle ':completion:*' menu select
+bindkey '^[[A' history-beginning-search-backward
+bindkey '^[[B' history-beginning-search-forward
+bindkey '^[[3~' delete-char
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
 bindkey -v
 
+# Environment variables
 export EDITOR=nano
+export HISTFILE=~/.zsh_history
+export HISTSIZE=10000
+export SAVEHIST=10000
 
+# Aliases
 alias ls='ls --color=auto'
 alias ll='ls -la'
 alias la='ls -a'
@@ -269,6 +309,14 @@ main() {
             print_warning "Could not change the default shell automatically. Please run 'chsh -s $(which zsh)' manually."
         fi
     fi
+
+    # Create zsh cache directory for completions
+    mkdir -p ~/.cache/zsh
+    chmod 700 ~/.cache/zsh
+
+    # Generate completions
+    print_info "Generating initial completion cache..."
+    zsh -c "autoload -Uz compinit && compinit -i"
 
     print_success "✅ Zsh setup complete! You will need to log out and log back in for the shell change to take effect."
     print_info "Alternatively, you can start using zsh now by running: zsh"
