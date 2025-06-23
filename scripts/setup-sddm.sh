@@ -6,7 +6,7 @@ mkdir -p "$HOME/.config/sddm"
 mkdir -p "$HOME/Documents/eloybercast/dotfiles/config/sddm"
 
 print_info "Installing SDDM and dependencies..."
-sudo pacman -S --needed --noconfirm sddm qt5-graphicaleffects qt5-quickcontrols2 qt5-svg
+sudo pacman -S --needed --noconfirm sddm qt5-graphicaleffects qt5-quickcontrols2 qt5-svg plasma-framework plasma-workspace kde-cli-tools
 
 print_info "Installing Chili theme for SDDM..."
 TEMP_DIR=$(mktemp -d)
