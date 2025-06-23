@@ -6,10 +6,39 @@ THUMBNAIL_SIZE=200
 
 mkdir -p "$CACHE_DIR"
 
-# Check if ImageMagick is installed
 if ! command -v convert &> /dev/null; then
-    notify-send "Wallpaper Selector" "ImageMagick is required but not installed. Please install it." -i dialog-error
-    exit 1
+    notify-send "Wallpaper Selector" "ImageMagick is required but not installed. Please install it with: 'sudo pacman -S imagemagick'" -i dialog-error
+    
+    if command -v zenity &> /dev/null; then
+        if zenity --question --text="Would you like to install ImageMagick now?" --title="Install ImageMagick"; then
+            if command -v pacman &> /dev/null; then
+                if command -v kitty &> /dev/null; then
+                    kitty -e sudo pacman -S --needed --noconfirm imagemagick
+                elif command -v alacritty &> /dev/null; then
+                    alacritty -e sudo pacman -S --needed --noconfirm imagemagick
+                elif command -v gnome-terminal &> /dev/null; then
+                    gnome-terminal -- sudo pacman -S --needed --noconfirm imagemagick
+                else
+                    notify-send "Wallpaper Selector" "Please install ImageMagick manually with: 'sudo pacman -S imagemagick'" -i dialog-information
+                    exit 1
+                fi
+                
+                if command -v convert &> /dev/null; then
+                    notify-send "Wallpaper Selector" "ImageMagick was installed successfully!" -i dialog-information
+                else
+                    notify-send "Wallpaper Selector" "Failed to install ImageMagick. Please install it manually." -i dialog-error
+                    exit 1
+                fi
+            else
+                notify-send "Wallpaper Selector" "Unsupported package manager. Please install ImageMagick manually." -i dialog-error
+                exit 1
+            fi
+        else
+            exit 1
+        fi
+    else
+        exit 1
+    fi
 fi
 
 if [ ! -d "$WALLPAPERS_DIR" ]; then

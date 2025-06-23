@@ -13,10 +13,10 @@ setup_wallpapers() {
     
     print_info "Installing wallpaper management tools..."
     if command -v pacman &> /dev/null; then
-        sudo pacman -S --needed --noconfirm swww hyprpaper
-        print_success "✅ Wallpaper managers installed"
+        sudo pacman -S --needed --noconfirm swww hyprpaper imagemagick
+        print_success "✅ Wallpaper managers and dependencies installed"
     else
-        print_warning "Unsupported package manager. Please install swww and hyprpaper manually."
+        print_warning "Unsupported package manager. Please install swww, hyprpaper, and imagemagick manually."
     fi
     
     print_info "Setting up swww service..."
