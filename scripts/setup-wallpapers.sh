@@ -13,10 +13,10 @@ setup_wallpapers() {
     
     print_info "Installing wallpaper management tools..."
     if command -v pacman &> /dev/null; then
-        sudo pacman -S --needed --noconfirm swww hyprpaper imagemagick
+        sudo pacman -S --needed --noconfirm swww imagemagick
         print_success "✅ Wallpaper managers and dependencies installed"
     else
-        print_warning "Unsupported package manager. Please install swww, hyprpaper, and imagemagick manually."
+        print_warning "Unsupported package manager. Please install swww and imagemagick manually."
     fi
     
     print_info "Setting up swww service..."
@@ -28,27 +28,20 @@ setup_wallpapers() {
             print_info "Added swww to Hyprland autostart"
         fi
         
-        if ! grep -q "exec-once = hyprpaper" "$HOME/.config/hypr/hyprland.conf"; then
-            echo "exec-once = hyprpaper" >> "$HOME/.config/hypr/hyprland.conf"
-            print_info "Added hyprpaper to Hyprland autostart"
+        if grep -q "exec-once = hyprpaper" "$HOME/.config/hypr/hyprland.conf"; then
+            sed -i 's/exec-once = hyprpaper/# exec-once = hyprpaper  # Using swww instead/g' "$HOME/.config/hypr/hyprland.conf"
+            print_info "Disabled hyprpaper in Hyprland autostart to avoid conflicts"
         fi
     else
         if [ -d "$HOME/.config/hypr" ]; then
             echo "exec-once = swww init" >> "$HOME/.config/hypr/exec.conf"
-            echo "exec-once = hyprpaper" >> "$HOME/.config/hypr/exec.conf"
             print_info "Created new exec.conf with wallpaper service autostart"
         fi
     fi
     
-    if [ ! -f "$HOME/.config/hypr/hyprpaper.conf" ]; then
-        cat > "$HOME/.config/hypr/hyprpaper.conf" <<EOF
-# This is your hyprpaper configuration file
-# It will be automatically updated when you change wallpapers using the selector script
-
-# The following option will enable ipc control for external programs
-ipc = on
-EOF
-        print_info "Created default hyprpaper.conf file"
+    if [ -f "$HOME/.config/hypr/hyprpaper.conf" ]; then
+        mv "$HOME/.config/hypr/hyprpaper.conf" "$HOME/.config/hypr/hyprpaper.conf.bak"
+        print_info "Backed up hyprpaper.conf to avoid conflicts with swww"
     fi
     
     if [ -d "assets/wallpapers" ]; then
@@ -64,33 +57,15 @@ EOF
         if [ -n "$FIRST_WALLPAPER" ]; then
             print_info "Setting initial wallpaper: $(basename "$FIRST_WALLPAPER")"
             
-            cat > "$HOME/.config/hypr/hyprpaper.conf" <<EOF
-# This is your hyprpaper configuration file
-# It will be automatically updated when you change wallpapers using the selector script
-
-# Default wallpaper
-preload = $FIRST_WALLPAPER
-wallpaper = ,$FIRST_WALLPAPER
-
-# The following option will enable ipc control for external programs
-ipc = on
-EOF
-            print_info "Updated hyprpaper.conf with initial wallpaper"
+            pkill hyprpaper 2>/dev/null || true
             
             if command -v swww &> /dev/null; then
                 swww init || true
+                sleep 1
                 swww img "$FIRST_WALLPAPER" --transition-type grow --transition-pos center
                 print_info "Set initial wallpaper with swww"
-            fi
-            
-            if command -v hyprpaper &> /dev/null; then
-                if pgrep -x "hyprpaper" > /dev/null; then
-                    hyprctl hyprpaper preload "$FIRST_WALLPAPER"
-                    hyprctl hyprpaper wallpaper ",$FIRST_WALLPAPER"
-                    print_info "Set initial wallpaper with hyprpaper"
-                else
-                    print_info "Hyprpaper will set the wallpaper on next login"
-                fi
+            else
+                print_warning "swww not available, wallpaper will be set on next login"
             fi
         fi
     else

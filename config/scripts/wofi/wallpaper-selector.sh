@@ -76,23 +76,33 @@ if [ -n "$selected" ]; then
         notify-send "Wallpaper Selector" "Selected wallpaper file not found: $wallpaper_path" -i dialog-error
         exit 1
     fi
+
+    pkill hyprpaper 2>/dev/null || true
+    
+    notify-send "Wallpaper Debug" "Using wallpaper: $wallpaper_path" -i "$wallpaper_path"
     
     if command -v swww &> /dev/null; then
-        swww query || swww init
-        swww img "$wallpaper_path" --transition-type grow --transition-pos center
-        notify-send "Wallpaper" "Set wallpaper to $selected with swww animations" -i "$wallpaper_path"
-    
-    elif command -v hyprctl &> /dev/null && command -v hyprpaper &> /dev/null; then
-        echo "preload = $wallpaper_path" > ~/.config/hypr/hyprpaper.conf
-        echo "wallpaper = ,${wallpaper_path}" >> ~/.config/hypr/hyprpaper.conf
-        
-        if pgrep -x "hyprpaper" > /dev/null; then
-            hyprctl hyprpaper preload "$wallpaper_path"
-            hyprctl hyprpaper wallpaper ",${wallpaper_path}"
-        else
-            hyprpaper &
+        if ! swww query; then
+            swww init
+            sleep 1
         fi
-        notify-send "Wallpaper" "Set wallpaper to $selected with hyprpaper" -i "$wallpaper_path"
+        
+        swww img "$wallpaper_path" --transition-type grow --transition-pos center --transition-duration 3
+        swww_status=$?
+        
+        if [ $swww_status -eq 0 ]; then
+            notify-send "Wallpaper" "Successfully set wallpaper to $selected with swww animations" -i "$wallpaper_path"
+        else
+            notify-send "Wallpaper Error" "Failed to set wallpaper with swww (error $swww_status)" -i dialog-error
+            
+            if command -v swaybg &> /dev/null; then
+                pkill swaybg 2>/dev/null || true
+                swaybg -i "$wallpaper_path" -m fill &
+                notify-send "Wallpaper" "Set wallpaper to $selected with swaybg (fallback)" -i "$wallpaper_path"
+            else
+                notify-send "Wallpaper Error" "No wallpaper setter available. Install swww or swaybg." -i dialog-error
+            fi
+        fi
     
     elif command -v swaybg &> /dev/null; then
         pkill swaybg 2>/dev/null || true
@@ -100,16 +110,8 @@ if [ -n "$selected" ]; then
         notify-send "Wallpaper" "Set wallpaper to $selected with swaybg" -i "$wallpaper_path"
     
     else
-        if command -v nitrogen &> /dev/null; then
-            nitrogen --set-zoom-fill "$wallpaper_path"
-            notify-send "Wallpaper" "Set wallpaper to $selected with nitrogen" -i "$wallpaper_path"
-        elif command -v feh &> /dev/null; then
-            feh --bg-fill "$wallpaper_path"
-            notify-send "Wallpaper" "Set wallpaper to $selected with feh" -i "$wallpaper_path"
-        else
-            notify-send "Wallpaper Selector" "No supported wallpaper setting tool found. Please install swww, hyprpaper, or swaybg." -i dialog-error
-            exit 1
-        fi
+        notify-send "Wallpaper Error" "No supported wallpaper setter found. Please install swww or swaybg." -i dialog-error
+        exit 1
     fi
 else
     notify-send "Wallpaper Selector" "No wallpaper selected" -i dialog-information
