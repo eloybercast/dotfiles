@@ -34,8 +34,8 @@ setup_hyprland() {
     print_info "Copying Hyprland configuration files..."
     mkdir -p "$HOME/.config/hypr"
     
-    if [ -d "config/hyprland" ]; then
-        cp -r config/hyprland/* "$HOME/.config/hypr/"
+    if [ -d "config/hypr" ]; then
+        cp -r config/hypr/* "$HOME/.config/hypr/"
         print_success "Hyprland configuration files copied successfully"
     else
         print_error "Hyprland configuration directory not found"

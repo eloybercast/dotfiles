@@ -27,9 +27,9 @@ EOF
 
 chmod +x ~/.local/bin/kitty-launch
 
-if [ -f "config/hyprland/keybinds.conf" ]; then
+if [ -f "config/hypr/keybinds.conf" ]; then
     print_info "Updating Hyprland keybinds to use kitty-launch..."
-    sed -i 's/\$terminal = kitty/\$terminal = kitty-launch/g' config/hyprland/keybinds.conf
+    sed -i 's/\$terminal = kitty/\$terminal = kitty-launch/g' config/hypr/keybinds.conf
 fi
 
 print_info "Checking for FiraCode Nerd Font..."

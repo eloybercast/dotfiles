@@ -57,9 +57,9 @@ fi
 print_info "Copied Waybar configuration and scripts to user config directory."
 
 print_info "Adding Waybar autostart to Hyprland config..."
-if [ -f "config/hyprland/user.conf" ]; then
-    if ! grep -q "waybar" "config/hyprland/user.conf"; then
-        echo -e "\n# Start Waybar\nexec-once = waybar" >> config/hyprland/user.conf
+if [ -f "config/hypr/user.conf" ]; then
+    if ! grep -q "waybar" "config/hypr/user.conf"; then
+        echo -e "\n# Start Waybar\nexec-once = waybar" >> config/hypr/user.conf
     fi
 fi
 
