@@ -31,6 +31,37 @@ setup_sddm_theme() {
     sudo mkdir -p "$sddm_themes_dir/sugar-dark"
     sudo cp -r "$temp_dir"/* "$sddm_themes_dir/sugar-dark/"
     
+    print_info "Setting custom wallpaper (Room1.png)..."
+    if [ -f "assets/wallpapers/Room1.png" ]; then
+        sudo cp "assets/wallpapers/Room1.png" "$sddm_themes_dir/sugar-dark/Background.jpg"
+        print_success "Custom wallpaper set successfully"
+    else
+        print_warning "Custom wallpaper not found at assets/wallpapers/Room1.png, using default"
+    fi
+    
+    print_info "Updating theme configuration..."
+    if [ -f "$sddm_themes_dir/sugar-dark/theme.conf" ]; then
+        if grep -q "^ScreenWidth=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
+            sudo sed -i 's|^ScreenWidth=.*|ScreenWidth=1920|g' "$sddm_themes_dir/sugar-dark/theme.conf"
+        else
+            echo "ScreenWidth=1920" | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
+        fi
+        
+        if grep -q "^ScreenHeight=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
+            sudo sed -i 's|^ScreenHeight=.*|ScreenHeight=1080|g' "$sddm_themes_dir/sugar-dark/theme.conf"
+        else
+            echo "ScreenHeight=1080" | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
+        fi
+        
+        if grep -q "^BackgroundMode=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
+            sudo sed -i 's|^BackgroundMode=.*|BackgroundMode=fill|g' "$sddm_themes_dir/sugar-dark/theme.conf"
+        else
+            echo "BackgroundMode=fill" | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
+        fi
+    else
+        print_warning "Theme configuration file not found, wallpaper may not be applied correctly"
+    fi
+    
     local sddm_conf_dir="/etc/sddm.conf.d"
     if [ ! -d "$sddm_conf_dir" ]; then
         print_info "Creating SDDM configuration directory..."
@@ -81,7 +112,7 @@ Current=sugar-dark" | sudo tee "$sddm_conf" > /dev/null
     rm -rf "$temp_dir"
     
     print_success "SDDM Sugar Dark Theme has been installed successfully!"
-    print_info "Your login screen will use the Sugar Dark theme on next boot."
+    print_info "Your login screen will use the Sugar Dark theme with the Room1.png wallpaper on next boot."
     print_info "Note: If you're using both GRUB and SDDM themes, they are configured separately and won't conflict."
 }
 
