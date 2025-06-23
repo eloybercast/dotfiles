@@ -28,7 +28,8 @@ setup_sddm_theme() {
     fi
     
     print_info "Installing theme to $sddm_themes_dir/sugar-dark..."
-    sudo cp -r "$temp_dir" "$sddm_themes_dir/sugar-dark"
+    sudo mkdir -p "$sddm_themes_dir/sugar-dark"
+    sudo cp -r "$temp_dir"/* "$sddm_themes_dir/sugar-dark/"
     
     local sddm_conf_dir="/etc/sddm.conf.d"
     if [ ! -d "$sddm_conf_dir" ]; then
@@ -41,6 +42,25 @@ setup_sddm_theme() {
     
     echo "[Theme]
 Current=sugar-dark" | sudo tee "$sddm_conf" > /dev/null
+    
+    if [ -f "/etc/sddm.conf" ]; then
+        print_info "Checking main SDDM configuration..."
+        if grep -q "\[Theme\]" "/etc/sddm.conf"; then
+            if grep -q "^Current=" "/etc/sddm.conf"; then
+                print_warning "Updating theme in /etc/sddm.conf..."
+                sudo sed -i 's|^Current=.*|Current=sugar-dark|g' "/etc/sddm.conf"
+            else
+                print_warning "Adding theme to existing Theme section in /etc/sddm.conf..."
+                sudo sed -i '/\[Theme\]/a Current=sugar-dark' "/etc/sddm.conf"
+            fi
+        else
+            print_warning "Adding Theme section to /etc/sddm.conf..."
+            echo -e "\n[Theme]\nCurrent=sugar-dark" | sudo tee -a "/etc/sddm.conf" > /dev/null
+        fi
+    else
+        print_info "Creating /etc/sddm.conf..."
+        echo -e "[Theme]\nCurrent=sugar-dark" | sudo tee "/etc/sddm.conf" > /dev/null
+    fi
     
     if ! command -v sddm &>/dev/null; then
         print_warning "SDDM is not installed. Installing SDDM..."
@@ -62,6 +82,7 @@ Current=sugar-dark" | sudo tee "$sddm_conf" > /dev/null
     
     print_success "SDDM Sugar Dark Theme has been installed successfully!"
     print_info "Your login screen will use the Sugar Dark theme on next boot."
+    print_info "Note: If you're using both GRUB and SDDM themes, they are configured separately and won't conflict."
 }
 
 setup_sddm_theme 
