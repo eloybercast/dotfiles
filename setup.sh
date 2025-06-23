@@ -82,10 +82,10 @@ setup_mako() {
     print_success "✅ Mako notifications setup complete"
 }
 
-setup_sddm() {
-    print_warning "⚙️ Setting up SDDM login manager..."
-    bash scripts/setup-sddm.sh
-    print_success "✅ SDDM login manager setup complete"
+setup_grub() {
+    print_warning "⚙️ Setting up GRUB theme..."
+    bash scripts/setup-grub.sh
+    print_success "✅ GRUB theme setup complete"
 }
 
 setup_all() {
@@ -101,7 +101,6 @@ setup_all() {
     setup_nautilus
     setup_scripts
     setup_mako
-    setup_sddm
     
     setup_waybar
     setup_wofi
@@ -109,6 +108,8 @@ setup_all() {
     setup_wallpapers
     
     setup_config_files
+    
+    setup_grub
     
     print_success "✅✅✅ All components installed successfully! ✅✅✅"
     print_info "Please log out and log back in to start using your new environment."
@@ -118,7 +119,7 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "SDDM" "All" "Quit")
+    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "GRUB Theme" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Browser") setup_browser ;;
@@ -133,7 +134,7 @@ interactive_mode() {
             "Scripts") setup_scripts ;;
             "Mako") setup_mako ;;
             "Config Files") setup_config_files ;;
-            "SDDM") setup_sddm ;;
+            "GRUB Theme") setup_grub ;;
             "All") setup_all; break ;;
             "Quit") break ;;
             *) echo "Invalid option" ;;
@@ -146,7 +147,7 @@ show_help() {
     echo -e "\e[34mEloy Bermejo's Arch Hyprland Dotfiles Setup\e[0m"
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --all         Install all components (Browser, Hyprland, Waybar, Wofi, Zsh, Kitty, Nautilus, Themes, Wallpapers, Scripts, Mako, SDDM)"
+    echo "  --all         Install all components (Browser, Hyprland, Waybar, Wofi, Zsh, Kitty, Nautilus, Themes, Wallpapers, Scripts, Mako)"
     echo "  --browser     Install Browser"
     echo "  --hyprland    Install Hyprland and keybindings"
     echo "  --waybar      Install Waybar with icons and visualizer"
@@ -159,7 +160,7 @@ show_help() {
     echo "  --scripts     Install scripts to user config directory"
     echo "  --mako        Install Mako notification daemon"
     echo "  --config-files Install config files to user config directory"
-    echo "  --sddm        Install SDDM login manager with Minegrub theme"
+    echo "  --grub        Install MineGrub World Selection theme"
     echo "  --interactive Interactive mode with menu"
     echo "  --help        Show this help message"
 }
@@ -179,7 +180,7 @@ while [[ $# -gt 0 ]]; do
         --scripts) setup_scripts; shift ;;
         --mako) setup_mako; shift ;;
         --config-files) setup_config_files; shift ;;
-        --sddm) setup_sddm; shift ;;
+        --grub) setup_grub; shift ;;
         --interactive) interactive_mode; shift ;;
         --help) show_help; exit 0 ;;
         *) print_error "Unknown option: $1"; show_help; exit 1 ;;
