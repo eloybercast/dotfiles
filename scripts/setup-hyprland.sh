@@ -45,6 +45,31 @@ setup_hyprland() {
         ln -sf "$HOME/.config/hypr" "$HOME/.config/hyprland"
         print_info "Created symbolic link from ~/.config/hyprland to ~/.config/hypr for compatibility"
     fi
+
+    # Disable Hyprland update notifications
+    print_info "Disabling Hyprland update notifications..."
+    mkdir -p "$HOME/.config/hypr"
+    if ! grep -q "disable_hyprland_logo" "$HOME/.config/hypr/hyprland.conf" 2>/dev/null; then
+        echo -e "\n# Disable update notifications\ndisable_hyprland_logo = true\ndisable_splash_rendering = true" >> "$HOME/.config/hypr/hyprland.conf"
+    fi
+    
+    # Create or update the env.conf file to disable update notifications
+    mkdir -p "$HOME/.config/hypr"
+    cat > "$HOME/.config/hypr/env.conf" << EOF
+# Environment variables
+env = XCURSOR_SIZE,24
+env = HYPRCURSOR_SIZE,24
+env = LIBVA_DRIVER_NAME,nvidia
+env = XDG_SESSION_TYPE,wayland
+env = GBM_BACKEND,nvidia-drm
+env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+env = WLR_NO_HARDWARE_CURSORS,1
+
+# Disable Hyprland update notifications
+env = HYPRLAND_NO_RT,1
+env = HYPRLAND_NO_SD,1
+EOF
+    print_success "Hyprland update notifications disabled"
 }
 
 setup_hyprland
