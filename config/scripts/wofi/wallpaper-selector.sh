@@ -3,6 +3,7 @@
 WALLPAPERS_DIR="$HOME/Pictures/Wallpapers"
 CACHE_DIR="$HOME/.cache/wofi-wallpaper"
 THUMBNAIL_SIZE=200
+WALLPAPER_SCRIPT="$HOME/.config/scripts/general/set-wallpaper.sh"
 
 mkdir -p "$CACHE_DIR"
 
@@ -76,24 +77,17 @@ if [ -n "$selected" ]; then
         notify-send "Wallpaper Selector" "Selected wallpaper file not found: $wallpaper_path" -i dialog-error
         exit 1
     fi
-
-    pkill hyprpaper 2>/dev/null || true
     
-    notify-send "Wallpaper Debug" "Using wallpaper: $wallpaper_path" -i "$wallpaper_path"
+    notify-send "Wallpaper" "Setting wallpaper to $selected..." -i "$wallpaper_path"
     
-    if command -v swww &> /dev/null; then
-        if ! swww query; then
-            swww init
-            sleep 1
-        fi
-        
-        swww img "$wallpaper_path" --transition-type grow --transition-pos center --transition-duration 3
-        swww_status=$?
-        
-        if [ $swww_status -eq 0 ]; then
-            notify-send "Wallpaper" "Successfully set wallpaper to $selected with swww animations" -i "$wallpaper_path"
+    ln -sf "$wallpaper_path" "$WALLPAPERS_DIR/default.png"
+    
+    if [ -x "$WALLPAPER_SCRIPT" ]; then
+        result=$("$WALLPAPER_SCRIPT" "$wallpaper_path" 2>&1)
+        if [ $? -eq 0 ]; then
+            notify-send "Wallpaper" "Wallpaper set to $selected successfully! ($result)" -i "$wallpaper_path"
         else
-            notify-send "Wallpaper Error" "Failed to set wallpaper with swww (error $swww_status)" -i dialog-error
+            notify-send "Wallpaper Error" "Failed to set wallpaper: $result" -i dialog-error
             
             if command -v swaybg &> /dev/null; then
                 pkill swaybg 2>/dev/null || true
@@ -103,15 +97,29 @@ if [ -n "$selected" ]; then
                 notify-send "Wallpaper Error" "No wallpaper setter available. Install swww or swaybg." -i dialog-error
             fi
         fi
-    
-    elif command -v swaybg &> /dev/null; then
-        pkill swaybg 2>/dev/null || true
-        swaybg -i "$wallpaper_path" -m fill &
-        notify-send "Wallpaper" "Set wallpaper to $selected with swaybg" -i "$wallpaper_path"
-    
     else
-        notify-send "Wallpaper Error" "No supported wallpaper setter found. Please install swww or swaybg." -i dialog-error
-        exit 1
+        notify-send "Wallpaper Error" "Wallpaper script not found at $WALLPAPER_SCRIPT" -i dialog-error
+        
+        if command -v swww &> /dev/null; then
+            swww query || swww init
+            if swww img "$wallpaper_path" --transition-type grow --transition-pos center; then
+                notify-send "Wallpaper" "Set wallpaper to $selected with swww" -i "$wallpaper_path"
+            else
+                if command -v swaybg &> /dev/null; then
+                    pkill swaybg 2>/dev/null || true
+                    swaybg -i "$wallpaper_path" -m fill &
+                    notify-send "Wallpaper" "Set wallpaper to $selected with swaybg (fallback)" -i "$wallpaper_path"
+                else
+                    notify-send "Wallpaper Error" "No wallpaper setter available. Install swww or swaybg." -i dialog-error
+                fi
+            fi
+        elif command -v swaybg &> /dev/null; then
+            pkill swaybg 2>/dev/null || true
+            swaybg -i "$wallpaper_path" -m fill &
+            notify-send "Wallpaper" "Set wallpaper to $selected with swaybg" -i "$wallpaper_path"
+        else
+            notify-send "Wallpaper Error" "No supported wallpaper setter found. Please install swww or swaybg." -i dialog-error
+        fi
     fi
 else
     notify-send "Wallpaper Selector" "No wallpaper selected" -i dialog-information

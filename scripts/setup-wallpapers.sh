@@ -13,35 +13,60 @@ setup_wallpapers() {
     
     print_info "Installing wallpaper management tools..."
     if command -v pacman &> /dev/null; then
-        sudo pacman -S --needed --noconfirm swww imagemagick
+        sudo pacman -S --needed --noconfirm swww swaybg imagemagick
         print_success "✅ Wallpaper managers and dependencies installed"
     else
-        print_warning "Unsupported package manager. Please install swww and imagemagick manually."
+        print_warning "Unsupported package manager. Please install swww, swaybg, and imagemagick manually."
     fi
     
-    print_info "Setting up swww service..."
+    print_info "Setting up wallpaper service..."
     mkdir -p "$HOME/.config/hypr"
     
-    if [ -f "$HOME/.config/hypr/hyprland.conf" ]; then
-        if ! grep -q "exec-once = swww init" "$HOME/.config/hypr/hyprland.conf"; then
-            echo "exec-once = swww init" >> "$HOME/.config/hypr/hyprland.conf"
-            print_info "Added swww to Hyprland autostart"
-        fi
-        
-        if grep -q "exec-once = hyprpaper" "$HOME/.config/hypr/hyprland.conf"; then
-            sed -i 's/exec-once = hyprpaper/# exec-once = hyprpaper  # Using swww instead/g' "$HOME/.config/hypr/hyprland.conf"
-            print_info "Disabled hyprpaper in Hyprland autostart to avoid conflicts"
-        fi
-    else
-        if [ -d "$HOME/.config/hypr" ]; then
-            echo "exec-once = swww init" >> "$HOME/.config/hypr/exec.conf"
-            print_info "Created new exec.conf with wallpaper service autostart"
-        fi
+    mkdir -p "$HOME/.config/scripts/general"
+    cat > "$HOME/.config/scripts/general/set-wallpaper.sh" <<EOF
+#!/bin/bash
+# Wallpaper setter script that tries multiple methods
+
+WALLPAPER="\$1"
+
+if [ -z "\$WALLPAPER" ] || [ ! -f "\$WALLPAPER" ]; then
+    echo "Error: Please provide a valid wallpaper path"
+    exit 1
+fi
+
+# Try swww first
+if command -v swww &> /dev/null; then
+    swww query || swww init
+    if swww query; then
+        swww img "\$WALLPAPER" --transition-type grow --transition-pos center
+        echo "Set wallpaper using swww"
+        exit 0
     fi
+fi
+
+# Fall back to swaybg if swww fails
+if command -v swaybg &> /dev/null; then
+    pkill swaybg 2>/dev/null || true
+    swaybg -i "\$WALLPAPER" -m fill &
+    echo "Set wallpaper using swaybg"
+    exit 0
+fi
+
+echo "Failed to set wallpaper - no working wallpaper tool found"
+exit 1
+EOF
+    chmod +x "$HOME/.config/scripts/general/set-wallpaper.sh"
+    print_info "Created fallback wallpaper setter script"
     
-    if [ -f "$HOME/.config/hypr/hyprpaper.conf" ]; then
-        mv "$HOME/.config/hypr/hyprpaper.conf" "$HOME/.config/hypr/hyprpaper.conf.bak"
-        print_info "Backed up hyprpaper.conf to avoid conflicts with swww"
+    if [ -f "$HOME/.config/hypr/hyprland.conf" ]; then
+        sed -i '/exec-once = swww init/d' "$HOME/.config/hypr/hyprland.conf"
+        sed -i '/exec-once = hyprpaper/d' "$HOME/.config/hypr/hyprland.conf"
+        
+        echo "" >> "$HOME/.config/hypr/hyprland.conf"
+        echo "# Wallpaper setup - tries multiple methods" >> "$HOME/.config/hypr/hyprland.conf"
+        echo "exec-once = sleep 1 && ~/.config/scripts/general/set-wallpaper.sh \$HOME/Pictures/Wallpapers/default.png" >> "$HOME/.config/hypr/hyprland.conf"
+        
+        print_info "Updated Hyprland config to use fallback wallpaper script"
     fi
     
     if [ -d "assets/wallpapers" ]; then
@@ -55,18 +80,10 @@ setup_wallpapers() {
         
         FIRST_WALLPAPER=$(find "$WALLPAPERS_DIR" -type f -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" | head -n 1)
         if [ -n "$FIRST_WALLPAPER" ]; then
+            ln -sf "$FIRST_WALLPAPER" "$WALLPAPERS_DIR/default.png"
             print_info "Setting initial wallpaper: $(basename "$FIRST_WALLPAPER")"
             
-            pkill hyprpaper 2>/dev/null || true
-            
-            if command -v swww &> /dev/null; then
-                swww init || true
-                sleep 1
-                swww img "$FIRST_WALLPAPER" --transition-type grow --transition-pos center
-                print_info "Set initial wallpaper with swww"
-            else
-                print_warning "swww not available, wallpaper will be set on next login"
-            fi
+            "$HOME/.config/scripts/general/set-wallpaper.sh" "$FIRST_WALLPAPER"
         fi
     else
         print_warning "Wallpapers directory not found in assets"
