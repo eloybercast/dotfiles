@@ -5,7 +5,6 @@ CACHE_DIR="$HOME/.cache/wofi-wallpaper"
 THUMBNAIL_SIZE=200
 WALLPAPER_SCRIPT="$HOME/.config/scripts/general/set-wallpaper.sh"
 
-# Ensure Wayland display variables are set (for VM compatibility)
 if [ -z "$WAYLAND_DISPLAY" ]; then
     export WAYLAND_DISPLAY=wayland-0
 fi
@@ -14,11 +13,9 @@ if [ -z "$XDG_RUNTIME_DIR" ]; then
     export XDG_RUNTIME_DIR=/run/user/$(id -u)
 fi
 
-# VM compatibility for Hyprland
 export WLR_NO_HARDWARE_CURSORS=1
 export WLR_RENDERER_ALLOW_SOFTWARE=1
 
-# Check if running in a VM
 if grep -q "hypervisor" /proc/cpuinfo || systemd-detect-virt -q; then
     VM_DETECTED=true
 else
@@ -102,7 +99,6 @@ if [ -n "$selected" ]; then
     
     ln -sf "$wallpaper_path" "$WALLPAPERS_DIR/default.png"
     
-    # In VM environments, prefer using swaybg directly
     if [ "$VM_DETECTED" = true ]; then
         notify-send "Wallpaper" "VM detected, using swaybg directly" -i "$wallpaper_path"
         pkill swaybg 2>/dev/null || true
@@ -115,7 +111,6 @@ if [ -n "$selected" ]; then
         fi
     fi
     
-    # Use the universal script if available
     if [ -x "$WALLPAPER_SCRIPT" ]; then
         result=$("$WALLPAPER_SCRIPT" "$wallpaper_path" 2>&1)
         if [ $? -eq 0 ]; then
