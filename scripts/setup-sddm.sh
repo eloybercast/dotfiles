@@ -39,7 +39,7 @@ setup_sddm_theme() {
         print_warning "Custom wallpaper not found at assets/wallpapers/Room1.png, using default"
     fi
     
-    print_info "Updating theme configuration..."
+    print_info "Updating theme configuration with custom styling..."
     if [ -f "$sddm_themes_dir/sugar-dark/theme.conf" ]; then
         if grep -q "^ScreenWidth=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
             sudo sed -i 's|^ScreenWidth=.*|ScreenWidth=1920|g' "$sddm_themes_dir/sugar-dark/theme.conf"
@@ -58,8 +58,58 @@ setup_sddm_theme() {
         else
             echo "BackgroundMode=fill" | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
         fi
+        
+        if grep -q "^Background=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
+            sudo sed -i 's|^Background=.*|Background="Background.jpg"|g' "$sddm_themes_dir/sugar-dark/theme.conf"
+        else
+            echo 'Background="Background.jpg"' | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
+        fi
+        
+        if grep -q "^BlurRadius=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
+            sudo sed -i 's|^BlurRadius=.*|BlurRadius=30|g' "$sddm_themes_dir/sugar-dark/theme.conf"
+        else
+            echo "BlurRadius=30" | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
+        fi
+        
+        if grep -q "^OverrideLoginButtonColor=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
+            sudo sed -i 's|^OverrideLoginButtonColor=.*|OverrideLoginButtonColor=true|g' "$sddm_themes_dir/sugar-dark/theme.conf"
+        else
+            echo "OverrideLoginButtonColor=true" | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
+        fi
+        
+        if grep -q "^AccentColor=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
+            sudo sed -i 's|^AccentColor=.*|AccentColor="#000000"|g' "$sddm_themes_dir/sugar-dark/theme.conf"
+        else
+            echo 'AccentColor="#000000"' | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
+        fi
+        
+        if grep -q "^FormPosition=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
+            sudo sed -i 's|^FormPosition=.*|FormPosition="center"|g' "$sddm_themes_dir/sugar-dark/theme.conf"
+        else
+            echo 'FormPosition="center"' | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
+        fi
+        
+        if grep -q "^BackgroundColor=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
+            sudo sed -i 's|^BackgroundColor=.*|BackgroundColor="#000000"|g' "$sddm_themes_dir/sugar-dark/theme.conf"
+        else
+            echo 'BackgroundColor="#000000"' | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
+        fi
+        
+        if grep -q "^PanelOpacity=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
+            sudo sed -i 's|^PanelOpacity=.*|PanelOpacity=0.6|g' "$sddm_themes_dir/sugar-dark/theme.conf"
+        else
+            echo "PanelOpacity=0.6" | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
+        fi
+        
+        if grep -q "^EnableBlur=" "$sddm_themes_dir/sugar-dark/theme.conf"; then
+            sudo sed -i 's|^EnableBlur=.*|EnableBlur=true|g' "$sddm_themes_dir/sugar-dark/theme.conf"
+        else
+            echo "EnableBlur=true" | sudo tee -a "$sddm_themes_dir/sugar-dark/theme.conf" > /dev/null
+        fi
+        
+        print_success "Theme styling configured with black background, blur and opacity"
     else
-        print_warning "Theme configuration file not found, wallpaper may not be applied correctly"
+        print_warning "Theme configuration file not found, styling may not be applied correctly"
     fi
     
     local sddm_conf_dir="/etc/sddm.conf.d"
@@ -113,6 +163,7 @@ Current=sugar-dark" | sudo tee "$sddm_conf" > /dev/null
     
     print_success "SDDM Sugar Dark Theme has been installed successfully!"
     print_info "Your login screen will use the Sugar Dark theme with the Room1.png wallpaper on next boot."
+    print_info "The theme has been customized with a black background, blur effect, and semi-transparency."
     print_info "Note: If you're using both GRUB and SDDM themes, they are configured separately and won't conflict."
 }
 
