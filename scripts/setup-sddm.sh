@@ -62,37 +62,55 @@ setup_sddm_theme() {
         print_warning "Theme configuration file not found, wallpaper may not be applied correctly"
     fi
     
+    # Ensure Hyprland desktop file exists
+    print_info "Ensuring Hyprland desktop file exists..."
+    local desktop_dir="/usr/share/wayland-sessions"
+    local desktop_file="$desktop_dir/hyprland.desktop"
+    
+    if [ ! -f "$desktop_file" ]; then
+        print_warning "Hyprland desktop file not found, creating it..."
+        sudo mkdir -p "$desktop_dir"
+        
+        echo "[Desktop Entry]
+Name=Hyprland
+Comment=A dynamic tiling Wayland compositor
+Exec=Hyprland
+Type=Application
+" | sudo tee "$desktop_file" > /dev/null
+        
+        sudo chmod 644 "$desktop_file"
+        print_success "Created Hyprland desktop file"
+    else
+        print_success "Hyprland desktop file already exists"
+    fi
+    
+    # Configure SDDM to properly handle Wayland sessions
     local sddm_conf_dir="/etc/sddm.conf.d"
     if [ ! -d "$sddm_conf_dir" ]; then
         print_info "Creating SDDM configuration directory..."
         sudo mkdir -p "$sddm_conf_dir"
     fi
     
-    local sddm_conf="$sddm_conf_dir/10-theme.conf"
-    print_info "Updating SDDM configuration at $sddm_conf..."
+    # Create SDDM Wayland configuration
+    print_info "Configuring SDDM for Wayland sessions..."
+    local wayland_conf="$sddm_conf_dir/10-wayland.conf"
+    
+    echo "[General]
+DisplayServer=wayland
+GreeterEnvironment=QT_WAYLAND_SHELL_INTEGRATION=layer-shell" | sudo tee "$wayland_conf" > /dev/null
+    
+    # Create theme configuration
+    local theme_conf="$sddm_conf_dir/20-theme.conf"
+    print_info "Updating SDDM theme configuration at $theme_conf..."
     
     echo "[Theme]
-Current=sugar-dark" | sudo tee "$sddm_conf" > /dev/null
+Current=sugar-dark" | sudo tee "$theme_conf" > /dev/null
     
-    if [ -f "/etc/sddm.conf" ]; then
-        print_info "Checking main SDDM configuration..."
-        if grep -q "\[Theme\]" "/etc/sddm.conf"; then
-            if grep -q "^Current=" "/etc/sddm.conf"; then
-                print_warning "Updating theme in /etc/sddm.conf..."
-                sudo sed -i 's|^Current=.*|Current=sugar-dark|g' "/etc/sddm.conf"
-            else
-                print_warning "Adding theme to existing Theme section in /etc/sddm.conf..."
-                sudo sed -i '/\[Theme\]/a Current=sugar-dark' "/etc/sddm.conf"
-            fi
-        else
-            print_warning "Adding Theme section to /etc/sddm.conf..."
-            echo -e "\n[Theme]\nCurrent=sugar-dark" | sudo tee -a "/etc/sddm.conf" > /dev/null
-        fi
-    else
-        print_info "Creating /etc/sddm.conf..."
-        echo -e "[Theme]\nCurrent=sugar-dark" | sudo tee "/etc/sddm.conf" > /dev/null
-    fi
+    # Fix permissions for home directory
+    print_info "Ensuring correct home directory permissions..."
+    sudo chown -R $(whoami):$(whoami) $HOME
     
+    # Check if SDDM is installed
     if ! command -v sddm &>/dev/null; then
         print_warning "SDDM is not installed. Installing SDDM..."
         sudo pacman -S --noconfirm sddm
@@ -101,7 +119,9 @@ Current=sugar-dark" | sudo tee "$sddm_conf" > /dev/null
         sudo systemctl enable sddm
     fi
     
-    local dependencies=("qt5-quickcontrols2" "qt5-graphicaleffects" "qt5-svg")
+    # Install required dependencies
+    print_info "Installing required dependencies..."
+    local dependencies=("qt5-quickcontrols2" "qt5-graphicaleffects" "qt5-svg" "xorg-xwayland")
     for dep in "${dependencies[@]}"; do
         if ! pacman -Qi "$dep" &>/dev/null; then
             print_warning "Installing dependency: $dep..."
@@ -109,6 +129,7 @@ Current=sugar-dark" | sudo tee "$sddm_conf" > /dev/null
         fi
     done
     
+    # Clean up
     rm -rf "$temp_dir"
     
     print_success "SDDM Sugar Dark Theme has been installed successfully!"
