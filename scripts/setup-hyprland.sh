@@ -26,7 +26,7 @@ install_package() {
 setup_hyprland() {
     print_warning "Installing Hyprland and dependencies..."
     
-    local packages=("hyprland" "rofi" "mako" "xdg-desktop-portal-hyprland" "kitty" "polkit-gnome" "xorg-xwayland" "qt5ct" "wlroots")
+    local packages=("hyprland" "rofi" "mako" "xdg-desktop-portal-hyprland" "kitty" "polkit-gnome" "xorg-xwayland" "qt5ct")
     for pkg in "${packages[@]}"; do
         install_package "$pkg"
     done
@@ -45,12 +45,6 @@ setup_hyprland() {
         ln -sf "$HOME/.config/hypr" "$HOME/.config/hyprland"
         print_info "Created symbolic link from ~/.config/hyprland to ~/.config/hypr for compatibility"
     fi
-    
-    print_info "Creating Hyprland session file..."
-    local desktop_dir="/usr/share/wayland-sessions"
-    local desktop_file="$desktop_dir/hyprland.desktop"
-    
-    sudo mkdir -p "$desktop_dir"
     
     print_info "Creating Hyprland startup script..."
     local bin_dir="$HOME/.local/bin"
@@ -77,6 +71,7 @@ export XDG_RUNTIME_DIR=/run/user/\$(id -u)
 export WAYLAND_DISPLAY=wayland-0
 export WLR_NO_HARDWARE_CURSORS=1
 export WLR_RENDERER_ALLOW_SOFTWARE=1
+export WLR_DRM_NO_ATOMIC=1
 
 # Make sure polkit agent is running
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
@@ -106,24 +101,6 @@ EOF
     sudo chown -R $(whoami):$(whoami) $HOME
     sudo chmod 755 $HOME
     
-    echo "[Desktop Entry]
-Name=Hyprland
-Comment=A dynamic tiling Wayland compositor
-Exec=/usr/local/bin/start-hyprland
-Type=Application
-X-GDM-SessionRegisters=true
-" | sudo tee "$desktop_file" > /dev/null
-    
-    sudo chmod 644 "$desktop_file"
-    
-    sudo mkdir -p /usr/share/xsessions
-    sudo cp "$desktop_file" "/usr/share/xsessions/Hyprland.desktop"
-    
-    print_info "Ensuring Hyprland executable permissions are correct..."
-    if [ -f "/usr/bin/Hyprland" ]; then
-        sudo chmod 755 /usr/bin/Hyprland
-    fi
-    
     print_info "Creating session check script..."
     cat > "$bin_dir/check-hyprland" <<EOF
 #!/bin/bash
@@ -149,14 +126,6 @@ echo "Hyprland Executable: \$(which Hyprland 2>/dev/null || echo 'NOT FOUND!')"
 echo "Startup Script: \$([ -x /usr/local/bin/start-hyprland ] && echo 'EXISTS' || echo 'NOT FOUND!')"
 echo ""
 
-echo "=== Session Files ==="
-echo "Wayland Sessions:"
-ls -la /usr/share/wayland-sessions/ 2>/dev/null || echo "Directory not found!"
-echo ""
-echo "X Sessions:"
-ls -la /usr/share/xsessions/ 2>/dev/null || echo "Directory not found!"
-echo ""
-
 echo "=== Log Files ==="
 if [ -f "\$HOME/hyprland-startup.log" ]; then
     echo "Startup Log:"
@@ -170,26 +139,24 @@ if [ -f "\$HOME/hyprland-error.log" ]; then
     echo ""
 fi
 
-echo "=== SDDM Configuration ==="
-ls -la /etc/sddm.conf.d/ 2>/dev/null || echo "Directory not found!"
-echo ""
-
-for conf in /etc/sddm.conf.d/*.conf; do
-    if [ -f "\$conf" ]; then
-        echo "=== \$(basename \$conf) ==="
-        cat "\$conf"
-        echo ""
-    fi
-done
-
 echo "=== End of Diagnostics ==="
 EOF
 
     chmod +x "$bin_dir/check-hyprland"
     sudo ln -sf "$bin_dir/check-hyprland" "/usr/local/bin/check-hyprland"
     
+    print_info "Creating direct Hyprland launcher..."
+    cat > "$bin_dir/hyprland-session" <<EOF
+#!/bin/bash
+
+# Simple script to start Hyprland directly
+exec Hyprland
+EOF
+    chmod +x "$bin_dir/hyprland-session"
+    sudo ln -sf "$bin_dir/hyprland-session" "/usr/local/bin/hyprland-session"
+    
     print_success "Hyprland setup completed successfully"
-    print_info "You can now select Hyprland from the SDDM session menu"
+    print_info "You can now start Hyprland by running 'hyprland-session' or 'start-hyprland'"
     print_info "If you encounter issues, run 'check-hyprland' for diagnostics"
 }
 

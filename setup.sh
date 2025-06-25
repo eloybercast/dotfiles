@@ -88,12 +88,6 @@ setup_grub() {
     print_success "✅ GRUB theme setup complete"
 }
 
-setup_sddm() {
-    print_warning "⚙️ Setting up SDDM theme..."
-    bash scripts/setup-sddm.sh
-    print_success "✅ SDDM theme setup complete"
-}
-
 setup_all() {
     show_welcome
     
@@ -116,7 +110,6 @@ setup_all() {
     setup_config_files
     
     setup_grub
-    setup_sddm
     
     print_success "✅✅✅ All components installed successfully! ✅✅✅"
     print_info "Please log out and log back in to start using your new environment."
@@ -126,7 +119,7 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "GRUB Theme" "SDDM Theme" "All" "Quit")
+    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "GRUB Theme" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Browser") setup_browser ;;
@@ -142,7 +135,6 @@ interactive_mode() {
             "Mako") setup_mako ;;
             "Config Files") setup_config_files ;;
             "GRUB Theme") setup_grub ;;
-            "SDDM Theme") setup_sddm ;;
             "All") setup_all; break ;;
             "Quit") break ;;
             *) echo "Invalid option" ;;
@@ -169,7 +161,6 @@ show_help() {
     echo "  --mako        Install Mako notification daemon"
     echo "  --config-files Install config files to user config directory"
     echo "  --grub        Install MineGrub World Selection theme"
-    echo "  --sddm        Install SDDM Sugar Dark theme"
     echo "  --interactive Interactive mode with menu"
     echo "  --help        Show this help message"
 }
@@ -190,7 +181,6 @@ while [[ $# -gt 0 ]]; do
         --mako) setup_mako; shift ;;
         --config-files) setup_config_files; shift ;;
         --grub) setup_grub; shift ;;
-        --sddm) setup_sddm; shift ;;
         --interactive) interactive_mode; shift ;;
         --help) show_help; exit 0 ;;
         *) print_error "Unknown option: $1"; show_help; exit 1 ;;
