@@ -62,66 +62,74 @@ setup_sddm_theme() {
         print_warning "Theme configuration file not found, wallpaper may not be applied correctly"
     fi
     
-    # Ensure Hyprland desktop file exists
-    print_info "Ensuring Hyprland desktop file exists..."
-    local desktop_dir="/usr/share/wayland-sessions"
-    local desktop_file="$desktop_dir/hyprland.desktop"
-    
-    if [ ! -f "$desktop_file" ]; then
-        print_warning "Hyprland desktop file not found, creating it..."
-        sudo mkdir -p "$desktop_dir"
-        
-        echo "[Desktop Entry]
-Name=Hyprland
-Comment=A dynamic tiling Wayland compositor
-Exec=Hyprland
-Type=Application
-" | sudo tee "$desktop_file" > /dev/null
-        
-        sudo chmod 644 "$desktop_file"
-        print_success "Created Hyprland desktop file"
-    else
-        print_success "Hyprland desktop file already exists"
-    fi
-    
-    # Configure SDDM to properly handle Wayland sessions
+    print_info "Creating SDDM environment configuration..."
     local sddm_conf_dir="/etc/sddm.conf.d"
-    if [ ! -d "$sddm_conf_dir" ]; then
-        print_info "Creating SDDM configuration directory..."
-        sudo mkdir -p "$sddm_conf_dir"
-    fi
+    sudo mkdir -p "$sddm_conf_dir"
     
-    # Create SDDM Wayland configuration
     print_info "Configuring SDDM for Wayland sessions..."
     local wayland_conf="$sddm_conf_dir/10-wayland.conf"
     
     echo "[General]
 DisplayServer=wayland
-GreeterEnvironment=QT_WAYLAND_SHELL_INTEGRATION=layer-shell" | sudo tee "$wayland_conf" > /dev/null
+GreeterEnvironment=QT_WAYLAND_SHELL_INTEGRATION=layer-shell
+WaylandCompositor=/usr/bin/weston
+
+[Wayland]
+EnableHiDPI=true
+SessionDir=/usr/share/wayland-sessions
+
+[X11]
+EnableHiDPI=true
+SessionDir=/usr/share/xsessions" | sudo tee "$wayland_conf" > /dev/null
     
-    # Create theme configuration
     local theme_conf="$sddm_conf_dir/20-theme.conf"
     print_info "Updating SDDM theme configuration at $theme_conf..."
     
     echo "[Theme]
-Current=sugar-dark" | sudo tee "$theme_conf" > /dev/null
+Current=sugar-dark
+
+[Autologin]
+Session=
+User=" | sudo tee "$theme_conf" > /dev/null
+
+    local env_conf="$sddm_conf_dir/30-environment.conf"
+    print_info "Creating SDDM environment variables configuration..."
     
-    # Fix permissions for home directory
+    echo "[Environment]
+XDG_SESSION_TYPE=wayland
+QT_WAYLAND_SHELL_INTEGRATION=layer-shell
+XDG_CURRENT_DESKTOP=Hyprland
+XDG_SESSION_DESKTOP=Hyprland
+QT_QPA_PLATFORM=wayland;xcb
+QT_QPA_PLATFORMTHEME=qt5ct
+MOZ_ENABLE_WAYLAND=1
+_JAVA_AWT_WM_NONREPARENTING=1
+" | sudo tee "$env_conf" > /dev/null
+    
+    print_info "Setting correct permissions for session directories..."
+    sudo chmod 755 /usr/share/wayland-sessions /usr/share/xsessions 2>/dev/null || true
+    
     print_info "Ensuring correct home directory permissions..."
     sudo chown -R $(whoami):$(whoami) $HOME
+    sudo chmod 755 $HOME
     
-    # Check if SDDM is installed
+    if [ -f "$HOME/.Xauthority" ]; then
+        sudo chown $(whoami):$(whoami) $HOME/.Xauthority
+    fi
+    
     if ! command -v sddm &>/dev/null; then
         print_warning "SDDM is not installed. Installing SDDM..."
         sudo pacman -S --noconfirm sddm
         
         print_info "Enabling SDDM service..."
         sudo systemctl enable sddm
+    else
+        print_info "Restarting SDDM configuration..."
+        sudo systemctl restart sddm 2>/dev/null || true
     fi
     
-    # Install required dependencies
     print_info "Installing required dependencies..."
-    local dependencies=("qt5-quickcontrols2" "qt5-graphicaleffects" "qt5-svg" "xorg-xwayland")
+    local dependencies=("qt5-quickcontrols2" "qt5-graphicaleffects" "qt5-svg" "xorg-xwayland" "weston" "qt5ct")
     for dep in "${dependencies[@]}"; do
         if ! pacman -Qi "$dep" &>/dev/null; then
             print_warning "Installing dependency: $dep..."
@@ -129,7 +137,6 @@ Current=sugar-dark" | sudo tee "$theme_conf" > /dev/null
         fi
     done
     
-    # Clean up
     rm -rf "$temp_dir"
     
     print_success "SDDM Sugar Dark Theme has been installed successfully!"
