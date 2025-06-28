@@ -1,19 +1,34 @@
 #!/bin/bash
 
-SCREENSHOT_DIR="$HOME/Images/Screenshots"
-mkdir -p "$SCREENSHOT_DIR"
+SCREENSHOTS_DIR="$HOME/Images/Screenshots"
+MAX_SCREENSHOTS=10
 
+# Create Screenshots directory if it doesn't exist
+mkdir -p "$SCREENSHOTS_DIR"
+
+# Generate filename with timestamp
 FILENAME="screenshot_$(date +%Y%m%d_%H%M%S).png"
-grim -g "$(slurp)" "$SCREENSHOT_DIR/$FILENAME"
+OUTPUT_PATH="$SCREENSHOTS_DIR/$FILENAME"
 
-if [ -f "$SCREENSHOT_DIR/$FILENAME" ]; then
-    wl-copy < "$SCREENSHOT_DIR/$FILENAME"
+# Take screenshot using grim and slurp
+grim -g "$(slurp)" "$OUTPUT_PATH"
+
+# Check if screenshot was successfully taken
+if [ -f "$OUTPUT_PATH" ]; then
+    # Copy to clipboard using wl-copy
+    wl-copy < "$OUTPUT_PATH"
     
-    notify-send "Screenshot" "Saved to $SCREENSHOT_DIR/$FILENAME and copied to clipboard" -i "$SCREENSHOT_DIR/$FILENAME"
+    # Notify user
+    notify-send "Screenshot taken" "Saved to $OUTPUT_PATH and copied to clipboard" -i "$OUTPUT_PATH"
     
-    find "$SCREENSHOT_DIR" -name "screenshot_*.png" | sort | head -n -10 | xargs -r rm
+    # Check if we need to delete older screenshots
+    SCREENSHOT_COUNT=$(ls -1 "$SCREENSHOTS_DIR" | wc -l)
+    
+    if [ "$SCREENSHOT_COUNT" -gt "$MAX_SCREENSHOTS" ]; then
+        OLDEST_SCREENSHOT=$(ls -t "$SCREENSHOTS_DIR" | tail -1)
+        rm "$SCREENSHOTS_DIR/$OLDEST_SCREENSHOT"
+        notify-send "Old screenshot removed" "$OLDEST_SCREENSHOT was deleted" -t 3000
+    fi
 else
-    notify-send "Screenshot" "Failed to take screenshot" -u critical
-fi
-
-exit 0 
+    notify-send "Screenshot failed" "Failed to take screenshot" -u critical
+fi 

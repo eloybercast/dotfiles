@@ -82,6 +82,12 @@ setup_mako() {
     print_success "✅ Mako notifications setup complete"
 }
 
+setup_screenshots() {
+    print_warning "⚙️ Setting up Screenshot functionality..."
+    bash scripts/setup-screenshots.sh
+    print_success "✅ Screenshot setup complete"
+}
+
 setup_all() {
     show_welcome
     
@@ -103,6 +109,7 @@ setup_all() {
     
     setup_config_files
     
+    setup_screenshots
     print_success "✅✅✅ All components installed successfully! ✅✅✅"
     print_info "Please log out and log back in to start using your new environment."
     print_info "Or run 'exec zsh' to start using zsh in the current session."
@@ -111,7 +118,7 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "All" "Quit")
+    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "Screenshots" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Browser") setup_browser ;;
@@ -126,6 +133,7 @@ interactive_mode() {
             "Scripts") setup_scripts ;;
             "Mako") setup_mako ;;
             "Config Files") setup_config_files ;;
+            "Screenshots") setup_screenshots ;;
             "All") setup_all; break ;;
             "Quit") break ;;
             *) echo "Invalid option" ;;
@@ -151,6 +159,7 @@ show_help() {
     echo "  --scripts     Install scripts to user config directory"
     echo "  --mako        Install Mako notification daemon"
     echo "  --config-files Install config files to user config directory"
+    echo "  --screenshots Install screenshot functionality"
     echo "  --interactive Interactive mode with menu"
     echo "  --help        Show this help message"
 }
@@ -170,6 +179,7 @@ while [[ $# -gt 0 ]]; do
         --scripts) setup_scripts; shift ;;
         --mako) setup_mako; shift ;;
         --config-files) setup_config_files; shift ;;
+        --screenshots) setup_screenshots; shift ;;
         --interactive) interactive_mode; shift ;;
         --help) show_help; exit 0 ;;
         *) print_error "Unknown option: $1"; show_help; exit 1 ;;

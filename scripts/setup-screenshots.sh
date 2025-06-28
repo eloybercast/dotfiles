@@ -1,20 +1,26 @@
 #!/bin/bash
 
-source "$(dirname "$0")/utils.sh"
+source $(dirname "$0")/utils.sh
 
-print_info "🖼️ Setting up screenshot functionality..."
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+DOTFILES_DIR=$(dirname "$SCRIPT_DIR")
+CONFIG_DIR="$DOTFILES_DIR/config"
 
-print_info "Creating Screenshots directory..."
-mkdir -p ~/Images/Screenshots
+print_info "Setting up screenshot functionality..."
 
-print_info "Installing dependencies for screenshots..."
-sudo pacman -S --noconfirm --needed grim slurp wl-clipboard
+mkdir -p "$HOME/Images/Screenshots"
+print_info "Created Screenshots directory at $HOME/Images/Screenshots"
+
+print_info "Installing required packages..."
+if command -v pacman &> /dev/null; then
+    sudo pacman -S --needed --noconfirm grim slurp wl-clipboard
+elif command -v apt &> /dev/null; then
+    sudo apt install -y grim slurp wl-clipboard
+fi
 
 print_info "Setting up screenshot script..."
-mkdir -p ~/.config/scripts/general/
-cp "$(dirname "$0")/../config/scripts/general/screenshot.sh" ~/.config/scripts/general/
-chmod +x ~/.config/scripts/general/screenshot.sh
+mkdir -p "$HOME/.config/scripts/general"
+cp "$CONFIG_DIR/scripts/general/screenshot.sh" "$HOME/.config/scripts/general/"
+chmod +x "$HOME/.config/scripts/general/screenshot.sh"
 
-print_success "✅ Screenshot functionality set up successfully!"
-
-exit 0 
+print_success "Screenshot functionality setup completed!" 
