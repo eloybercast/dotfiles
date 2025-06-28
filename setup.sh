@@ -88,6 +88,12 @@ setup_screenshots() {
     print_success "✅ Screenshot setup complete"
 }
 
+setup_cursor() {
+    print_warning "⚙️ Setting up Volantes Cursors..."
+    bash scripts/setup-cursor.sh
+    print_success "✅ Cursor setup complete"
+}
+
 setup_all() {
     show_welcome
     
@@ -95,6 +101,7 @@ setup_all() {
     setup_browser
     
     setup_hyprland
+    setup_cursor
     
     setup_kitty
     setup_themes
@@ -118,7 +125,7 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "Screenshots" "All" "Quit")
+    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "Screenshots" "Cursor" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Browser") setup_browser ;;
@@ -134,6 +141,7 @@ interactive_mode() {
             "Mako") setup_mako ;;
             "Config Files") setup_config_files ;;
             "Screenshots") setup_screenshots ;;
+            "Cursor") setup_cursor ;;
             "All") setup_all; break ;;
             "Quit") break ;;
             *) echo "Invalid option" ;;
@@ -160,6 +168,7 @@ show_help() {
     echo "  --mako        Install Mako notification daemon"
     echo "  --config-files Install config files to user config directory"
     echo "  --screenshots Install screenshot functionality"
+    echo "  --cursor      Install Volantes Cursors"
     echo "  --interactive Interactive mode with menu"
     echo "  --help        Show this help message"
 }
@@ -180,6 +189,7 @@ while [[ $# -gt 0 ]]; do
         --mako) setup_mako; shift ;;
         --config-files) setup_config_files; shift ;;
         --screenshots) setup_screenshots; shift ;;
+        --cursor) setup_cursor; shift ;;
         --interactive) interactive_mode; shift ;;
         --help) show_help; exit 0 ;;
         *) print_error "Unknown option: $1"; show_help; exit 1 ;;
