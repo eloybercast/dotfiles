@@ -14,14 +14,6 @@ setup_scripts() {
     
     cp -r scripts/* "$HOME/.config/scripts/"
     
-    mkdir -p "$HOME/.config/scripts/wofi"
-    
-    if [ -f "$DOTFILES_DIR/config/scripts/wofi/workspace-manager.sh" ]; then
-        cp "$DOTFILES_DIR/config/scripts/wofi/workspace-manager.sh" "$HOME/.config/scripts/wofi/"
-        chmod +x "$HOME/.config/scripts/wofi/workspace-manager.sh"
-        print_success "Workspace manager script installed"
-    fi
-    
     if [ $? -eq 0 ]; then
         print_success "All scripts copied successfully to $HOME/.config/scripts/"
         
@@ -33,4 +25,4 @@ setup_scripts() {
     fi
 }
 
-setup_scripts
+setup_scripts 
