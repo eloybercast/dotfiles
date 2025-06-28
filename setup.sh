@@ -100,8 +100,8 @@ setup_all() {
     setup_zsh
     setup_browser
     
-    setup_hyprland
     setup_cursor
+    setup_hyprland
     
     setup_kitty
     setup_themes
