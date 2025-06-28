@@ -2,8 +2,6 @@
 
 A modern, elegant, and functional Hyprland configuration for Arch Linux.
 
-![Hyprland Desktop](assets/wallpapers/wallhaven-ymz61d_2560x1440.png)
-
 ## Screenshots
 
 > **Note:** This repository is not maintained for the community. It is shared for reference and inspiration, but is intended for Eloy's personal use only.
