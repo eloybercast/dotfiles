@@ -11,6 +11,7 @@ install_volantes_cursors() {
     print_info "Installing Volantes Cursors..."
     
     mkdir -p "$CURSOR_DIR"
+    mkdir -p "$HOME/.icons/default"
     
     if [ -d "$ASSETS_DIR/Volantes_Cursors" ] && [ -d "$ASSETS_DIR/Volantes_Cursors_White" ]; then
         print_info "Using cursor files from assets directory"
@@ -35,14 +36,22 @@ install_volantes_cursors() {
         rm -rf "$TMP_DIR"
     fi
     
-    if [ -f "$HOME/.icons/default/index.theme" ]; then
-        mkdir -p "$HOME/.icons/default"
-    fi
-    
     cat > "$HOME/.icons/default/index.theme" << EOF
 [Icon Theme]
 Inherits=Volantes_Cursors
 EOF
+
+    mkdir -p "$HOME/.config/gtk-3.0"
+    if [ -f "$HOME/.config/gtk-3.0/settings.ini" ]; then
+        if grep -q "gtk-cursor-theme-name" "$HOME/.config/gtk-3.0/settings.ini"; then
+            sed -i 's/gtk-cursor-theme-name=.*/gtk-cursor-theme-name=Volantes_Cursors/' "$HOME/.config/gtk-3.0/settings.ini"
+        else
+            echo "gtk-cursor-theme-name=Volantes_Cursors" >> "$HOME/.config/gtk-3.0/settings.ini"
+        fi
+    else
+        echo "[Settings]" > "$HOME/.config/gtk-3.0/settings.ini"
+        echo "gtk-cursor-theme-name=Volantes_Cursors" >> "$HOME/.config/gtk-3.0/settings.ini"
+    fi
     
     print_success "Volantes Cursors installed successfully!"
 }
