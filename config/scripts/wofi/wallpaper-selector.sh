@@ -76,35 +76,19 @@ if [ -z "$image_files" ]; then
     exit 1
 fi
 
-# Create temporary file for wofi input
-wofi_input=$(mktemp)
-chmod 600 "$wofi_input"
-
-# Generate thumbnails and prepare wofi input
+options=""
 for img in $image_files; do
     filename=$(basename "$img")
     thumbnail="$CACHE_DIR/${filename%.*}.png"
     
-    # Generate or update thumbnail if needed
     if [ ! -f "$thumbnail" ] || [ "$img" -nt "$thumbnail" ]; then
         convert "$img" -thumbnail "${THUMBNAIL_SIZE}x${THUMBNAIL_SIZE}^" -gravity center -extent "${THUMBNAIL_SIZE}x${THUMBNAIL_SIZE}" "$thumbnail"
     fi
     
-    # Add entry to wofi input with proper formatting for image display
-    printf "%s\0icon\x1f%s\n" "$filename" "$thumbnail" >> "$wofi_input"
+    options="$options$filename\x00icon\x1f$thumbnail\n"
 done
 
-# Run wofi with image mode enabled
-selected=$(wofi --dmenu --allow-images --cache-file /dev/null --insensitive \
-           --prompt "Select Wallpaper" --width 800 --height 500 \
-           --conf=/dev/null --style=/dev/null \
-           --define=allow_markup=true \
-           --define=image-size=${THUMBNAIL_SIZE} \
-           --define=sort_order=alphabetical \
-           < "$wofi_input")
-
-# Clean up temporary file
-rm -f "$wofi_input"
+selected=$(echo -e "$options" | wofi --dmenu --allow-images --cache-file /dev/null --insensitive --prompt "Select Wallpaper" --width 600 --height 400)
 
 if [ -n "$selected" ]; then
     wallpaper_path="$WALLPAPERS_DIR/$selected"
