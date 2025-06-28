@@ -5,172 +5,155 @@ source $(dirname "$0")/utils.sh
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 DOTFILES_DIR=$(dirname "$SCRIPT_DIR")
 
-print_info "Setting up Volantes cursors..."
+print_info "Setting up cursor theme for Hyprland in VM..."
 
+# Install xcursor-themes and dependencies
 print_info "Installing required packages..."
 if command -v pacman &> /dev/null; then
-    sudo pacman -S --needed --noconfirm curl unzip xcursor-themes adwaita-icon-theme
+    sudo pacman -S --needed --noconfirm xcursor-themes adwaita-icon-theme
 elif command -v apt &> /dev/null; then
-    sudo apt install -y curl unzip xcursor-themes adwaita-icon-theme
+    sudo apt install -y xcursor-themes adwaita-icon-theme
 fi
 
-CURSORS_DIR="$HOME/.local/share/icons"
-mkdir -p "$CURSORS_DIR"
+# Set up a basic cursor that works reliably in VMs
+print_info "Setting up cursor configuration for VM compatibility..."
 
-if [ -d "$CURSORS_DIR/Volantes_Cursors" ]; then
-    print_info "Volantes cursors are already installed, removing old version..."
-    rm -rf "$CURSORS_DIR/Volantes_Cursors"
-fi
-
-print_info "Downloading Volantes cursor theme..."
-TMP_DIR=$(mktemp -d)
-VOLANTES_DOWNLOAD_URL="https://github.com/varlesh/volantes-cursors/archive/refs/heads/master.zip"
-
-curl -L "$VOLANTES_DOWNLOAD_URL" -o "$TMP_DIR/volantes.zip"
-
-print_info "Extracting cursor theme..."
-unzip -q "$TMP_DIR/volantes.zip" -d "$TMP_DIR"
-
-print_info "Installing the cursor theme..."
-cd "$TMP_DIR/volantes-cursors-master"
-if command -v make &> /dev/null; then
-    make install PREFIX="$HOME/.local"
-else
-    mkdir -p "$CURSORS_DIR/Volantes_Cursors"
-    cp -r dist/* "$CURSORS_DIR/"
-fi
-
-print_info "Applying VM-specific fixes..."
-
-# Ensure proper permissions
-sudo chmod -R 755 "$CURSORS_DIR/Volantes_Cursors" 2>/dev/null || chmod -R 755 "$CURSORS_DIR/Volantes_Cursors" 2>/dev/null
-
-mkdir -p "$HOME/.icons/default"
-sudo mkdir -p "/usr/share/icons/default" 2>/dev/null || true
-
-# Create additional symlinks to ensure the cursor is found
-mkdir -p "$HOME/.icons"
-ln -sf "$CURSORS_DIR/Volantes_Cursors" "$HOME/.icons/Volantes_Cursors" 2>/dev/null || true
-ln -sf "$CURSORS_DIR/Volantes_Cursors" "$HOME/.local/share/icons/default" 2>/dev/null || true
-
-# Set as default for all users
-cat > "$HOME/.icons/default/index.theme" << EOF
-[Icon Theme]
-Name=Default
-Comment=Default Cursor Theme
-Inherits=Volantes_Cursors
+# Create a simple ~/.Xresources file to set cursor theme and size
+cat > "$HOME/.Xresources" << EOF
+Xcursor.theme: Adwaita
+Xcursor.size: 24
 EOF
 
-# Configure GTK settings
+# Ensure the cursor is readable
+xrdb -merge "$HOME/.Xresources" 2>/dev/null || true
+
+# Update GTK settings in both GTK3 and GTK4
 for gtk_ver in "gtk-3.0" "gtk-4.0"; do
-    GTK_DIR="$HOME/.config/$gtk_ver"
-    GTK_SETTINGS="$GTK_DIR/settings.ini"
+    GTK_CONFIG_DIR="$HOME/.config/$gtk_ver"
+    GTK_SETTINGS="$GTK_CONFIG_DIR/settings.ini"
     
-    mkdir -p "$GTK_DIR"
+    mkdir -p "$GTK_CONFIG_DIR"
     
     if [ -f "$GTK_SETTINGS" ]; then
-        if grep -q "gtk-cursor-theme-name" "$GTK_SETTINGS"; then
-            sed -i 's/gtk-cursor-theme-name=.*/gtk-cursor-theme-name=Volantes_Cursors/' "$GTK_SETTINGS"
-        else
-            echo "gtk-cursor-theme-name=Volantes_Cursors" >> "$GTK_SETTINGS"
+        sed -i 's/gtk-cursor-theme-name=.*/gtk-cursor-theme-name=Adwaita/' "$GTK_SETTINGS"
+        sed -i 's/gtk-cursor-theme-size=.*/gtk-cursor-theme-size=24/' "$GTK_SETTINGS"
+        
+        if ! grep -q "gtk-cursor-theme-name" "$GTK_SETTINGS"; then
+            echo "gtk-cursor-theme-name=Adwaita" >> "$GTK_SETTINGS"
         fi
         
-        if grep -q "gtk-cursor-theme-size" "$GTK_SETTINGS"; then
-            sed -i 's/gtk-cursor-theme-size=.*/gtk-cursor-theme-size=24/' "$GTK_SETTINGS"
-        else
+        if ! grep -q "gtk-cursor-theme-size" "$GTK_SETTINGS"; then
             echo "gtk-cursor-theme-size=24" >> "$GTK_SETTINGS"
         fi
     else
         cat > "$GTK_SETTINGS" << EOF
 [Settings]
-gtk-cursor-theme-name=Volantes_Cursors
+gtk-cursor-theme-name=Adwaita
 gtk-cursor-theme-size=24
+gtk-application-prefer-dark-theme=1
 EOF
     fi
 done
 
-# Update Xresources
-XRESOURCES="$HOME/.Xresources"
-if [ -f "$XRESOURCES" ]; then
-    if ! grep -q "Xcursor.theme" "$XRESOURCES"; then
-        echo "Xcursor.theme: Volantes_Cursors" >> "$XRESOURCES"
-        echo "Xcursor.size: 24" >> "$XRESOURCES"
-    else
-        sed -i 's/Xcursor.theme:.*/Xcursor.theme: Volantes_Cursors/' "$XRESOURCES"
-        sed -i 's/Xcursor.size:.*/Xcursor.size: 24/' "$XRESOURCES"
-    fi
-else
-    echo "Xcursor.theme: Volantes_Cursors" > "$XRESOURCES"
-    echo "Xcursor.size: 24" >> "$XRESOURCES"
-fi
-
-xrdb -merge "$XRESOURCES" 2>/dev/null || true
-
+# Update Hyprland configuration to use hardware cursor
 ENV_CONF="$HOME/.config/hypr/env.conf"
-DOTFILES_ENV_CONF="$DOTFILES_DIR/config/hypr/env.conf"
+CONFIG_ENV_CONF="$DOTFILES_DIR/config/hypr/env.conf"
 
-print_info "Updating Hyprland environment settings for cursor in VM..."
-mkdir -p "$(dirname "$ENV_CONF")"
+# Update env.conf - this is critical
+if [ -f "$ENV_CONF" ]; then
+    # Replace WLR_NO_HARDWARE_CURSORS=1 with WLR_NO_HARDWARE_CURSORS=0
+    sed -i 's/WLR_NO_HARDWARE_CURSORS=1/WLR_NO_HARDWARE_CURSORS=0/g' "$ENV_CONF"
+    
+    # Remove any XCURSOR lines
+    sed -i '/XCURSOR_THEME/d' "$ENV_CONF"
+    sed -i '/XCURSOR_SIZE/d' "$ENV_CONF" 
+    sed -i '/XCURSOR_PATH/d' "$ENV_CONF"
+    
+    # Add our cursor configuration
+    cat >> "$ENV_CONF" << EOF
 
-if [ ! -f "$ENV_CONF" ] && [ -f "$DOTFILES_ENV_CONF" ]; then
-    cp "$DOTFILES_ENV_CONF" "$ENV_CONF"
+# Cursor configuration
+export XCURSOR_THEME=Adwaita
+export XCURSOR_SIZE=24
+EOF
 fi
 
-# Create powerful fix-cursor script for manual use
-SCRIPT_PATH="$HOME/.local/bin"
-mkdir -p "$SCRIPT_PATH"
+# Update the dotfiles version too
+if [ -f "$CONFIG_ENV_CONF" ]; then
+    # Replace WLR_NO_HARDWARE_CURSORS=1 with WLR_NO_HARDWARE_CURSORS=0
+    sed -i 's/WLR_NO_HARDWARE_CURSORS=1/WLR_NO_HARDWARE_CURSORS=0/g' "$CONFIG_ENV_CONF"
+    
+    # Remove any XCURSOR lines
+    sed -i '/XCURSOR_THEME/d' "$CONFIG_ENV_CONF"
+    sed -i '/XCURSOR_SIZE/d' "$CONFIG_ENV_CONF"
+    sed -i '/XCURSOR_PATH/d' "$CONFIG_ENV_CONF"
+    
+    # Add our cursor configuration
+    cat >> "$CONFIG_ENV_CONF" << EOF
 
-cat > "$SCRIPT_PATH/fix-cursor.sh" << 'EOF'
-#!/bin/bash
-
-# Define cursor theme and size
-CURSOR_THEME="Volantes_Cursors"
-CURSOR_SIZE=24
-
-# Apply via gsettings (for GNOME/GTK apps)
-gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR_THEME"
-gsettings set org.gnome.desktop.interface cursor-size $CURSOR_SIZE
-
-# Apply via Hyprland
-hyprctl setcursor "$CURSOR_THEME" $CURSOR_SIZE
-
-# Update GTK settings
-for gtk_ver in "gtk-3.0" "gtk-4.0"; do
-    GTK_SETTINGS="$HOME/.config/$gtk_ver/settings.ini"
-    if [ -f "$GTK_SETTINGS" ]; then
-        sed -i "s/gtk-cursor-theme-name=.*/gtk-cursor-theme-name=$CURSOR_THEME/" "$GTK_SETTINGS"
-        sed -i "s/gtk-cursor-theme-size=.*/gtk-cursor-theme-size=$CURSOR_SIZE/" "$GTK_SETTINGS"
-    fi
-done
-
-echo "Cursor theme set to $CURSOR_THEME with size $CURSOR_SIZE"
-echo "Please restart your session or applications for changes to take effect"
+# Cursor configuration
+export XCURSOR_THEME=Adwaita
+export XCURSOR_SIZE=24
 EOF
-
-chmod +x "$SCRIPT_PATH/fix-cursor.sh"
-
-# Create startup script for Hyprland
-mkdir -p "$HOME/.config/hypr/startup"
-cat > "$HOME/.config/hypr/startup/cursor.sh" << 'EOF'
-#!/bin/bash
-sleep 1
-gsettings set org.gnome.desktop.interface cursor-theme "Volantes_Cursors"
-gsettings set org.gnome.desktop.interface cursor-size 24
-hyprctl setcursor Volantes_Cursors 24
-EOF
-
-chmod +x "$HOME/.config/hypr/startup/cursor.sh"
-
-# Add to hyprland.conf if not already there
-if [ -f "$HOME/.config/hypr/hyprland.conf" ]; then
-    if ! grep -q "exec-once = ~/.config/hypr/startup/cursor.sh" "$HOME/.config/hypr/hyprland.conf"; then
-        echo "exec-once = ~/.config/hypr/startup/cursor.sh" >> "$HOME/.config/hypr/hyprland.conf"
-        print_info "Added cursor startup script to hyprland.conf"
-    fi
 fi
 
-print_success "✅ Volantes cursor setup complete!"
-print_info "The cursor will be applied after you restart your Hyprland session."
-print_info "If you still don't see the Volantes cursor:"
-print_info "1. Run '$HOME/.local/bin/fix-cursor.sh'"
-print_info "2. Make sure your VM settings allow custom cursors"
+# Update hyprland.conf directly
+HYPR_CONF="$HOME/.config/hypr/hyprland.conf"
+if [ -f "$HYPR_CONF" ]; then
+    # Replace cursor exec-once lines
+    sed -i '/exec-once = hyprctl setcursor/d' "$HYPR_CONF"
+    sed -i '/exec-once = gsettings set org.gnome.desktop.interface cursor-theme/d' "$HYPR_CONF"
+    
+    # Add our cursor setting commands
+    cat >> "$HYPR_CONF" << EOF
+
+# Apply Adwaita cursor (VM-compatible)
+exec-once = gsettings set org.gnome.desktop.interface cursor-theme 'Adwaita'
+exec-once = gsettings set org.gnome.desktop.interface cursor-size 24
+exec-once = hyprctl setcursor Adwaita 24
+EOF
+fi
+
+# Create user.conf with proper cursor settings
+USER_CONF="$HOME/.config/hypr/user.conf"
+DOTFILES_USER_CONF="$DOTFILES_DIR/config/hypr/user.conf"
+
+if [ -f "$USER_CONF" ]; then
+    # Remove any existing cursor settings
+    sed -i '/cursor {/,/}/d' "$USER_CONF"
+    
+    # Add our cursor config
+    cat >> "$USER_CONF" << EOF
+
+# VM-compatible cursor settings
+cursor {
+    # Use hardware cursor to fix VM issues
+    force_no_hardware_cursors = false
+}
+EOF
+fi
+
+if [ -f "$DOTFILES_USER_CONF" ]; then
+    # Remove any existing cursor settings
+    sed -i '/cursor {/,/}/d' "$DOTFILES_USER_CONF"
+    
+    # Add our cursor config
+    cat >> "$DOTFILES_USER_CONF" << EOF
+
+# VM-compatible cursor settings
+cursor {
+    # Use hardware cursor to fix VM issues
+    force_no_hardware_cursors = false
+}
+EOF
+fi
+
+# Apply settings with gsettings immediately
+if command -v gsettings &> /dev/null; then
+    gsettings set org.gnome.desktop.interface cursor-theme 'Adwaita'
+    gsettings set org.gnome.desktop.interface cursor-size 24
+fi
+
+print_success "✅ Cursor setup complete!"
+print_info "The Adwaita cursor will be applied after you restart Hyprland."
+print_info "This cursor theme is specially configured to work in VM environments."
