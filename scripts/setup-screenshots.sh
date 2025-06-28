@@ -13,9 +13,9 @@ print_info "Created Screenshots directory at $HOME/Images/Screenshots"
 
 print_info "Installing required packages..."
 if command -v pacman &> /dev/null; then
-    sudo pacman -S --needed --noconfirm grim slurp wl-clipboard
+    sudo pacman -S --needed --noconfirm grim slurp wl-clipboard pulseaudio-utils xdg-utils
 elif command -v apt &> /dev/null; then
-    sudo apt install -y grim slurp wl-clipboard
+    sudo apt install -y grim slurp wl-clipboard pulseaudio-utils xdg-utils
 fi
 
 print_info "Setting up screenshot script..."
