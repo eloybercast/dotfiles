@@ -7,7 +7,7 @@ DARK_THEME="Adwaita-dark"
 LIGHT_THEME="Adwaita"
 DARK_ICON="candy-icons"
 LIGHT_ICON="candy-icons"
-CURSOR="Volantes_Cursors"
+CURSOR="Bibata-Modern-Ice"
 FONT="Ubuntu 10"
 
 setup_candy_icons() {
