@@ -15,11 +15,21 @@ fi
 
 mkdir -p ~/.config/kitty
 
-# Copy kitty configuration
-if [ -d "config/kitty" ]; then
-    print_info "Copying kitty configuration files..."
-    cp -r config/kitty/* ~/.config/kitty/
-    print_success "✅ kitty configuration copied."
+print_info "Creating kitty launch wrapper..."
+
+mkdir -p ~/.local/bin
+
+cat > ~/.local/bin/kitty-launch <<EOF
+#!/bin/bash
+export PATH="\$HOME/.local/bin:\$PATH"
+exec kitty "\$@"
+EOF
+
+chmod +x ~/.local/bin/kitty-launch
+
+if [ -f "config/hypr/keybinds.conf" ]; then
+    print_info "Updating Hyprland keybinds to use kitty-launch..."
+    sed -i 's/\$terminal = kitty/\$terminal = kitty-launch/g' config/hypr/keybinds.conf
 fi
 
 print_info "Checking for FiraCode Nerd Font..."

@@ -40,6 +40,7 @@ setup_wallpapers() {
     mkdir -p "$HOME/.config/scripts/general"
     cat > "$HOME/.config/scripts/general/set-wallpaper.sh" <<EOF
 #!/bin/bash
+# Wallpaper setter script that tries multiple methods
 
 WALLPAPER="\$1"
 
@@ -48,15 +49,19 @@ if [ -z "\$WALLPAPER" ] || [ ! -f "\$WALLPAPER" ]; then
     exit 1
 fi
 
+# Ensure Wayland display is set
 if [ -z "\$WAYLAND_DISPLAY" ]; then
     export WAYLAND_DISPLAY=wayland-0
 fi
 
+# Ensure XDG_RUNTIME_DIR is set
 if [ -z "\$XDG_RUNTIME_DIR" ]; then
     export XDG_RUNTIME_DIR=/run/user/\$(id -u)
 fi
 
+# Check if running in VM
 if grep -q "hypervisor" /proc/cpuinfo || systemd-detect-virt -q; then
+    # In VMs, prefer swaybg directly as it's more reliable
     if command -v swaybg &> /dev/null; then
         pkill swaybg 2>/dev/null || true
         swaybg -i "\$WALLPAPER" -m fill &
@@ -64,10 +69,13 @@ if grep -q "hypervisor" /proc/cpuinfo || systemd-detect-virt -q; then
         exit 0
     fi
 else
+    # On real hardware, try swww first
     if command -v swww &> /dev/null; then
+        # Force initialize swww (ignore errors)
         swww init 2>/dev/null || true
         sleep 1
         
+        # Try to set wallpaper with swww
         if swww img "\$WALLPAPER" --transition-type grow --transition-pos center 2>/dev/null; then
             echo "Set wallpaper using swww with animations"
             exit 0
@@ -77,6 +85,7 @@ else
     fi
 fi
 
+# Fall back to swaybg if previous methods failed
 if command -v swaybg &> /dev/null; then
     pkill swaybg 2>/dev/null || true
     swaybg -i "\$WALLPAPER" -m fill &
@@ -96,18 +105,22 @@ EOF
         sed -i '/exec-once = .*set-wallpaper.sh/d' "$HOME/.config/hypr/hyprland.conf"
         
         echo "" >> "$HOME/.config/hypr/hyprland.conf"
+        echo "# Wallpaper setup - uses appropriate method for hardware/VM" >> "$HOME/.config/hypr/hyprland.conf"
         echo "exec-once = sleep 3 && ~/.config/scripts/general/set-wallpaper.sh \$HOME/Pictures/Wallpapers/default.png" >> "$HOME/.config/hypr/hyprland.conf"
         
         print_info "Updated Hyprland config to use wallpaper script with increased delay"
     fi
     
+    # Ensure env variables for Wayland in VMs
     print_info "Checking environment variables for VM compatibility..."
     ENV_CONF="$HOME/.config/hypr/env.conf"
     
     if [ -f "$ENV_CONF" ]; then
+        # Make sure VM-related variables are set
         if ! grep -q "WAYLAND_DISPLAY" "$ENV_CONF"; then
             cat >> "$ENV_CONF" <<EOF
 
+# Fix for VM and wallpaper issues
 export WAYLAND_DISPLAY=wayland-0
 export XDG_RUNTIME_DIR=/run/user/\$(id -u)
 export WLR_NO_HARDWARE_CURSORS=1
@@ -116,12 +129,15 @@ EOF
             print_info "Added VM compatibility variables to env.conf"
         fi
     else
+        # Create env.conf if it doesn't exist
         mkdir -p "$HOME/.config/hypr"
         cat > "$ENV_CONF" <<EOF
+# General Wayland environment variables
 export XDG_SESSION_TYPE=wayland
 export MOZ_ENABLE_WAYLAND=1
 export QT_QPA_PLATFORM=wayland
 
+# Fix for VM and wallpaper issues
 export WAYLAND_DISPLAY=wayland-0
 export XDG_RUNTIME_DIR=/run/user/\$(id -u)
 export WLR_NO_HARDWARE_CURSORS=1
@@ -130,12 +146,14 @@ EOF
         print_info "Created env.conf with VM compatibility variables"
     fi
     
+    # Function to download a random wallpaper
     download_random_wallpaper() {
         mkdir -p "$WALLPAPERS_DIR"
         DEFAULT_WALLPAPER="$WALLPAPERS_DIR/default.png"
         
         print_info "Downloading a random wallpaper..."
         
+        # Try Unsplash random image
         if command -v curl &> /dev/null; then
             curl -s -L -o "$DEFAULT_WALLPAPER" "https://source.unsplash.com/random/1920x1080/?nature,landscape"
             if [ -f "$DEFAULT_WALLPAPER" ] && [ -s "$DEFAULT_WALLPAPER" ]; then
@@ -143,6 +161,7 @@ EOF
                 return 0
             fi
             
+            # Fallback to another source if Unsplash fails
             curl -s -L -o "$DEFAULT_WALLPAPER" "https://picsum.photos/1920/1080"
             if [ -f "$DEFAULT_WALLPAPER" ] && [ -s "$DEFAULT_WALLPAPER" ]; then
                 print_success "Downloaded random wallpaper from Picsum Photos"
@@ -150,6 +169,7 @@ EOF
             fi
         fi
         
+        # If downloads fail, create a simple gradient wallpaper using ImageMagick
         if command -v convert &> /dev/null; then
             print_info "Creating default gradient wallpaper with ImageMagick..."
             convert -size 1920x1080 gradient:navy-darkblue "$DEFAULT_WALLPAPER"
@@ -160,6 +180,7 @@ EOF
         return 1
     }
     
+    # Check if wallpapers directory exists in assets and copy wallpapers
     WALLPAPERS_FOUND=false
     if [ -d "assets/wallpapers" ]; then
         find assets/wallpapers -type f -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" | while read -r file; do
@@ -178,6 +199,7 @@ EOF
         mkdir -p "assets/wallpapers"
     fi
     
+    # Find existing wallpapers or download a random one if none exist
     FIRST_WALLPAPER=$(find "$WALLPAPERS_DIR" -type f -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" | head -n 1)
     if [ -n "$FIRST_WALLPAPER" ]; then
         ln -sf "$FIRST_WALLPAPER" "$WALLPAPERS_DIR/default.png"
@@ -191,9 +213,11 @@ EOF
         fi
     fi
     
+    # Export the Wayland display variable before trying to set wallpaper
     export WAYLAND_DISPLAY=wayland-0
     export XDG_RUNTIME_DIR=/run/user/$(id -u)
     
+    # Don't try to set wallpaper during setup - it will be set on next login
     print_info "Wallpaper will be set automatically on next Hyprland startup"
     
     chmod -R 755 "$WALLPAPERS_DIR"

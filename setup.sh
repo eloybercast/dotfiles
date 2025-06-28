@@ -82,18 +82,6 @@ setup_mako() {
     print_success "✅ Mako notifications setup complete"
 }
 
-setup_screenshots() {
-    print_warning "⚙️ Setting up Screenshot functionality..."
-    bash scripts/setup-screenshots.sh
-    print_success "✅ Screenshot functionality setup complete"
-}
-
-setup_grub() {
-    print_warning "⚙️ Setting up GRUB theme..."
-    bash scripts/setup-grub.sh
-    print_success "✅ GRUB theme setup complete"
-}
-
 setup_all() {
     show_welcome
     
@@ -115,10 +103,6 @@ setup_all() {
     
     setup_config_files
     
-    setup_screenshots
-    
-    setup_grub
-    
     print_success "✅✅✅ All components installed successfully! ✅✅✅"
     print_info "Please log out and log back in to start using your new environment."
     print_info "Or run 'exec zsh' to start using zsh in the current session."
@@ -127,7 +111,7 @@ setup_all() {
 interactive_mode() {
     show_welcome
     echo "Select components to install:"
-    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "Screenshots" "GRUB Theme" "All" "Quit")
+    options=("Browser" "Hyprland" "Waybar" "Wofi" "Zsh" "Kitty" "Nautilus" "Themes" "Wallpapers" "Scripts" "Mako" "Config Files" "All" "Quit")
     select opt in "${options[@]}"; do
         case $opt in
             "Browser") setup_browser ;;
@@ -142,8 +126,6 @@ interactive_mode() {
             "Scripts") setup_scripts ;;
             "Mako") setup_mako ;;
             "Config Files") setup_config_files ;;
-            "Screenshots") setup_screenshots ;;
-            "GRUB Theme") setup_grub ;;
             "All") setup_all; break ;;
             "Quit") break ;;
             *) echo "Invalid option" ;;
@@ -169,8 +151,6 @@ show_help() {
     echo "  --scripts     Install scripts to user config directory"
     echo "  --mako        Install Mako notification daemon"
     echo "  --config-files Install config files to user config directory"
-    echo "  --screenshots Install screenshot functionality"
-    echo "  --grub        Install MineGrub World Selection theme"
     echo "  --interactive Interactive mode with menu"
     echo "  --help        Show this help message"
 }
@@ -190,8 +170,6 @@ while [[ $# -gt 0 ]]; do
         --scripts) setup_scripts; shift ;;
         --mako) setup_mako; shift ;;
         --config-files) setup_config_files; shift ;;
-        --screenshots) setup_screenshots; shift ;;
-        --grub) setup_grub; shift ;;
         --interactive) interactive_mode; shift ;;
         --help) show_help; exit 0 ;;
         *) print_error "Unknown option: $1"; show_help; exit 1 ;;
