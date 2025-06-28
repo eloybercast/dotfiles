@@ -31,9 +31,14 @@ setup_wofi() {
     print_info "Copying wofi scripts"
     cp -r "$DOTFILES_DIR/config/scripts/wofi/"* "$HOME/.config/scripts/wofi/"
     
+    if [ -f "$HOME/.config/scripts/wofi/workspace-manager.sh" ]; then
+        chmod +x "$HOME/.config/scripts/wofi/workspace-manager.sh"
+        print_success "Workspace manager script is now executable"
+    fi
+    
     chmod +x "$HOME/.config/scripts/wofi/"*.sh
     
     print_success "wofi setup completed"
 }
 
-setup_wofi 
+setup_wofi

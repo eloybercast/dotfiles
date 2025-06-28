@@ -1,0 +1,16 @@
+width=400
+height=300
+location=center
+show=dmenu
+prompt=Move window to workspace:
+filter_rate=100
+allow_markup=true
+no_actions=true
+halign=fill
+orientation=vertical
+content_halign=left
+insensitive=true
+hide_scroll=true
+hide_search=false
+image_size=24
+allow_images=true 
