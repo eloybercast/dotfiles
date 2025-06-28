@@ -38,47 +38,39 @@ This repository contains my personal dotfiles for Arch Linux with Hyprland. The 
 Run the setup script to install all components:
 
 ```bash
-git clone https://github.com/eloybercast/dotfiles.git
-cd dotfiles
+chmod +x setup.sh
 ./setup.sh --all
 ```
 
 ### Selective Installation
 
-You can also install specific components:
-
-```bash
-./setup.sh --interactive  # Interactive menu
-# Or install specific components
-./setup.sh --hyprland --waybar --mako
-```
-
-### Available Components
-
-- `--browser`: Firefox with system theme integration
-- `--hyprland`: Hyprland window manager and keybindings
-- `--waybar`: Status bar with custom modules
-- `--wofi`: Application launcher and menus
-- `--zsh`: Zsh shell with Oh My Posh
-- `--kitty`: Terminal with custom configuration
-- `--nautilus`: File manager
-- `--themes`: System themes and wallpapers
-- `--scripts`: Utility scripts
-- `--mako`: Notification daemon
-- `--config-files`: All configuration files
+_This repository no longer provides an interactive menu. Please use the quick install method above to install all components._
 
 ## Keybindings
 
-| Keybinding          | Action                     |
-| ------------------- | -------------------------- |
-| Super + Return      | Open terminal              |
-| Super + Q           | Close active window        |
-| Super + D           | Open application launcher  |
-| Super + P           | Open power menu            |
-| Super + 1-5         | Switch to workspace        |
-| Super + Shift + 1-5 | Move window to workspace   |
-| Super + N           | Dismiss all notifications  |
-| Super + Shift + N   | Toggle Do Not Disturb mode |
+| Keybinding                     | Action                         |
+| ------------------------------ | ------------------------------ |
+| Super + Return / T             | Open terminal                  |
+| Super + Q                      | Close active window            |
+| Super + M                      | Exit Hyprland                  |
+| Super + E                      | Open file manager              |
+| Super + V                      | Toggle floating mode           |
+| Super + D                      | Open application launcher      |
+| Super + P                      | Open power menu                |
+| Super + W                      | Open wallpaper selector        |
+| Super + N                      | Dismiss all notifications      |
+| Super + Shift + N              | Toggle Do Not Disturb mode     |
+| Super + Alt + N                | Notification history           |
+| Super + Shift + 4              | Take screenshot                |
+| Super + [1-5]                  | Switch to workspace [1-5]      |
+| Super + Shift + [1-5]          | Move window to workspace [1-5] |
+| Super + Tab / Mouse Down       | Next workspace                 |
+| Super + Shift + Tab / Mouse Up | Previous workspace             |
+| Super + Left/Right/Up/Down     | Move focus                     |
+| Super + Mouse Drag             | Move/resize window             |
+| XF86Audio\*                    | Audio controls                 |
+| XF86MonBrightness\*            | Brightness controls            |
+| XF86AudioNext/Prev/Play/Pause  | Media controls                 |
 
 ## Customization
 
