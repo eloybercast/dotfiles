@@ -2,58 +2,79 @@
 
 source $(dirname "$0")/utils.sh
 
-CURSOR_NAME="volantes-cursors"
-CURSOR_REPO="https://github.com/varlesh/volantes-cursors.git"
-CURSOR_DIR="$HOME/.local/share/icons"
-ASSETS_DIR="$(dirname "$(dirname "$0")")/assets/cursors"
-
 install_volantes_cursors() {
-    print_info "Installing Volantes Cursors..."
+    print_warning "Installing Volantes Cursors..."
     
-    mkdir -p "$CURSOR_DIR"
+    # Create necessary directories
+    mkdir -p "$HOME/.local/share/icons"
     mkdir -p "$HOME/.icons/default"
+    mkdir -p "$HOME/.config/gtk-3.0"
+    mkdir -p "$HOME/.config/gtk-4.0"
     
-    if [ -d "$ASSETS_DIR/Volantes_Cursors" ] && [ -d "$ASSETS_DIR/Volantes_Cursors_White" ]; then
-        print_info "Using cursor files from assets directory"
-        cp -r "$ASSETS_DIR/Volantes_Cursors" "$CURSOR_DIR/"
-        cp -r "$ASSETS_DIR/Volantes_Cursors_White" "$CURSOR_DIR/"
-    else
-        print_info "Downloading cursor files from GitHub"
-        TMP_DIR=$(mktemp -d)
-        
-        git clone "$CURSOR_REPO" "$TMP_DIR"
-        
-        cd "$TMP_DIR"
-        
-        mkdir -p "$ASSETS_DIR"
-        
-        cp -r "$TMP_DIR/dist/Volantes_Cursors" "$ASSETS_DIR/"
-        cp -r "$TMP_DIR/dist/Volantes_Cursors_White" "$ASSETS_DIR/"
-        
-        cp -r "$TMP_DIR/dist/Volantes_Cursors" "$CURSOR_DIR/"
-        cp -r "$TMP_DIR/dist/Volantes_Cursors_White" "$CURSOR_DIR/"
-        
-        rm -rf "$TMP_DIR"
-    fi
+    # Clone the repository directly
+    TMP_DIR=$(mktemp -d)
+    print_info "Downloading Volantes Cursors from GitHub..."
+    git clone --depth 1 https://github.com/varlesh/volantes-cursors.git "$TMP_DIR"
     
+    # Install cursors
+    cd "$TMP_DIR"
+    
+    # Copy cursor files to icons directory
+    print_info "Installing cursor files to system..."
+    cp -rf "$TMP_DIR/dist/Volantes_Cursors" "$HOME/.local/share/icons/"
+    cp -rf "$TMP_DIR/dist/Volantes_Cursors_White" "$HOME/.local/share/icons/"
+    
+    # Also copy to .icons directory for compatibility
+    cp -rf "$TMP_DIR/dist/Volantes_Cursors" "$HOME/.icons/"
+    cp -rf "$TMP_DIR/dist/Volantes_Cursors_White" "$HOME/.icons/"
+    
+    # Set X11 cursor theme
     cat > "$HOME/.icons/default/index.theme" << EOF
 [Icon Theme]
 Inherits=Volantes_Cursors
 EOF
-
-    mkdir -p "$HOME/.config/gtk-3.0"
+    
+    # Set GTK cursor theme
     if [ -f "$HOME/.config/gtk-3.0/settings.ini" ]; then
-        if grep -q "gtk-cursor-theme-name" "$HOME/.config/gtk-3.0/settings.ini"; then
-            sed -i 's/gtk-cursor-theme-name=.*/gtk-cursor-theme-name=Volantes_Cursors/' "$HOME/.config/gtk-3.0/settings.ini"
-        else
-            echo "gtk-cursor-theme-name=Volantes_Cursors" >> "$HOME/.config/gtk-3.0/settings.ini"
-        fi
-    else
-        echo "[Settings]" > "$HOME/.config/gtk-3.0/settings.ini"
+        sed -i '/gtk-cursor-theme-name=/d' "$HOME/.config/gtk-3.0/settings.ini"
+        sed -i '/gtk-cursor-theme-size=/d' "$HOME/.config/gtk-3.0/settings.ini"
         echo "gtk-cursor-theme-name=Volantes_Cursors" >> "$HOME/.config/gtk-3.0/settings.ini"
+        echo "gtk-cursor-theme-size=24" >> "$HOME/.config/gtk-3.0/settings.ini"
+    else
+        cat > "$HOME/.config/gtk-3.0/settings.ini" << EOF
+[Settings]
+gtk-cursor-theme-name=Volantes_Cursors
+gtk-cursor-theme-size=24
+EOF
     fi
     
-    print_success "Volantes Cursors installed successfully!"
+    # Copy settings to GTK4
+    cp -f "$HOME/.config/gtk-3.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
+    
+    # Set GTK2 cursor theme
+    if [ -f "$HOME/.gtkrc-2.0" ]; then
+        sed -i '/gtk-cursor-theme-name=/d' "$HOME/.gtkrc-2.0"
+        sed -i '/gtk-cursor-theme-size=/d' "$HOME/.gtkrc-2.0"
+        echo 'gtk-cursor-theme-name="Volantes_Cursors"' >> "$HOME/.gtkrc-2.0"
+        echo "gtk-cursor-theme-size=24" >> "$HOME/.gtkrc-2.0"
+    else
+        cat > "$HOME/.gtkrc-2.0" << EOF
+gtk-cursor-theme-name="Volantes_Cursors"
+gtk-cursor-theme-size=24
+EOF
+    fi
+    
+    # Apply cursor theme to running session
+    if command -v gsettings &> /dev/null; then
+        gsettings set org.gnome.desktop.interface cursor-theme 'Volantes_Cursors'
+        gsettings set org.gnome.desktop.interface cursor-size 24
+    fi
+    
+    # Clean up
+    rm -rf "$TMP_DIR"
+    
+    print_success "✅ Volantes Cursors installed successfully!"
 }
 
+# Execute the function
 install_volantes_cursors
